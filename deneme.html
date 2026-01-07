@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stark Industries · Glass Phone UI</title>
+  <title>Stark Industries · Glass Phone OS</title>
   <style>
     :root{
       --neon:#00f6ff;
@@ -15,27 +15,23 @@
 
     *{box-sizing:border-box;}
     html,body{
-      margin:0; height:100%; background:radial-gradient(1200px 800px at 50% 20%, #0a1a22, var(--bg));
+      margin:0; height:100%;
+      background:radial-gradient(1200px 800px at 50% 20%, #0a1a22, var(--bg));
       font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont;
       color:#e8feff; overflow:hidden;
     }
 
-    /* ====== DEVICE FRAME ====== */
-    .device{
-      position:absolute; inset:0; display:grid; place-items:center;
-      perspective:1200px;
-    }
+    /* ===== DEVICE ===== */
+    .device{ position:absolute; inset:0; display:grid; place-items:center; perspective:1200px; }
 
     .glass{
-      width:360px; height:760px; border-radius:28px;
+      width:360px; height:760px; border-radius:28px; position:relative; overflow:hidden;
       background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.02));
       backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
       box-shadow:
         0 0 0 1px rgba(255,255,255,.18) inset,
         0 40px 120px rgba(0,0,0,.65),
         0 0 60px var(--neon-soft);
-      position:relative; overflow:hidden;
       transform: rotateX(6deg) rotateY(-8deg);
       animation: float 6s ease-in-out infinite;
     }
@@ -45,125 +41,77 @@
       50%{transform: rotateX(4deg) rotateY(-6deg) translateY(-10px)}
     }
 
-    /* subtle scanlines */
     .glass::after{
       content:""; position:absolute; inset:0;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.04),
-        rgba(255,255,255,.04) 1px,
-        transparent 1px,
-        transparent 3px
-      );
-      mix-blend-mode: overlay; pointer-events:none; opacity:.35;
+      background:repeating-linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.04) 1px, transparent 1px, transparent 3px);
+      mix-blend-mode:overlay; opacity:.35; pointer-events:none;
     }
 
-    /* ====== HEADER ====== */
+    /* ===== HEADER ===== */
     header{
       display:flex; justify-content:space-between; align-items:center;
-      padding:18px 18px 10px;
+      padding:16px; font-size:11px;
       border-bottom:1px solid rgba(255,255,255,.12);
     }
 
-    .logo{
-      letter-spacing:.25em; font-weight:700; font-size:12px;
-      color:var(--neon);
-      text-shadow:0 0 10px var(--neon);
-    }
+    .logo{ letter-spacing:.25em; font-weight:700; color:var(--neon); text-shadow:0 0 10px var(--neon); }
 
-    .status{
-      font-size:11px; opacity:.85;
-    }
-
-    /* ====== ARC REACTOR CORE ====== */
+    /* ===== ARC REACTOR INFO CORE ===== */
     .core{
-      position:absolute; top:110px; left:50%; transform:translateX(-50%);
-      width:180px; height:180px; border-radius:50%;
-      filter: drop-shadow(0 0 25px var(--neon));
+      position:absolute; top:100px; left:50%; transform:translateX(-50%);
+      width:200px; height:200px; border-radius:50%;
+      filter:drop-shadow(0 0 25px var(--neon));
+      display:grid; place-items:center;
     }
 
-    .ring{
-      position:absolute; inset:0; border-radius:50%;
-      border:2px solid rgba(0,246,255,.4);
-      animation: spin 12s linear infinite;
+    .ring{ position:absolute; inset:0; border-radius:50%; border:2px solid rgba(0,246,255,.4); animation:spin 14s linear infinite; }
+    .ring:nth-child(2){ inset:14px; animation-duration:9s; border-color:rgba(255,179,0,.5); }
+    .ring:nth-child(3){ inset:28px; animation-duration:22s; }
+
+    .core-info{
+      text-align:center; z-index:2; font-size:11px; line-height:1.4;
     }
 
-    .ring:nth-child(2){ inset:14px; animation-duration: 8s; border-color:rgba(255,179,0,.5)}
-    .ring:nth-child(3){ inset:28px; animation-duration: 18s; }
+    .time{ font-size:26px; letter-spacing:.1em; }
+    .weather{ font-size:11px; opacity:.85; }
+    .location{ font-size:10px; opacity:.6; }
 
-    .pulse{
-      position:absolute; inset:50px; border-radius:50%;
-      background:radial-gradient(circle at center, #9ffcff, rgba(0,246,255,.15) 60%, transparent 70%);
-      animation: pulse 2.5s ease-in-out infinite;
+    @keyframes spin{ to{transform:rotate(360deg)} }
+
+    /* ===== APP GRID ===== */
+    .apps{
+      position:absolute; inset:0;
+      padding:360px 18px 18px;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
     }
 
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
-
-    /* ====== HUD BUTTONS ====== */
-    .hud{
-      position:absolute; inset:0; padding-top:340px;
-      display:grid; grid-template-columns: repeat(3,1fr);
-      gap:14px; padding:340px 18px 18px;
-    }
-
-    .btn{
-      height:96px; border-radius:16px; position:relative;
+    .app{
+      height:96px; border-radius:16px; position:relative; cursor:pointer;
       background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.03));
       border:1px solid rgba(255,255,255,.18);
       backdrop-filter: blur(10px);
-      cursor:pointer; overflow:hidden;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
       transition:.25s ease;
     }
 
-    .btn:hover{
-      box-shadow:0 0 22px var(--neon-soft), inset 0 0 0 1px var(--neon);
-      transform: translateY(-2px);
-    }
-
-    .btn::before{
-      content:""; position:absolute; inset:0;
-      background: linear-gradient(120deg, transparent 30%, rgba(0,246,255,.35), transparent 70%);
-      transform: translateX(-100%);
-    }
-
-    .btn:hover::before{ animation: sweep .9s linear; }
-    @keyframes sweep{to{transform:translateX(100%)}}
+    .app:hover{ transform:translateY(-2px); box-shadow:0 0 22px var(--neon-soft), inset 0 0 0 1px var(--neon); }
 
     .icon{
-      width:34px; height:34px; border-radius:50%;
-      border:2px solid var(--neon);
-      margin:16px auto 8px;
+      width:34px; height:34px; margin:16px auto 8px;
+      border-radius:50%; border:2px solid var(--neon);
       position:relative;
     }
 
     .icon::after{
       content:""; position:absolute; inset:6px; border-radius:50%;
-      background:var(--neon);
-      box-shadow:0 0 12px var(--neon);
+      background:var(--neon); box-shadow:0 0 12px var(--neon);
     }
 
-    .label{
-      text-align:center; font-size:11px; letter-spacing:.15em;
-      color:#b9fdff;
-    }
+    .label{ text-align:center; font-size:11px; letter-spacing:.15em; }
 
-    /* ====== SIDE WIRES / HUD DECOR ====== */
-    .wire{
-      position:absolute; top:0; bottom:0; width:1px;
-      background: linear-gradient(transparent, var(--neon), transparent);
-      opacity:.35; animation: flicker 3s infinite;
-    }
-    .wire.left{left:8px}
-    .wire.right{right:8px}
-    @keyframes flicker{0%,100%{opacity:.2}50%{opacity:.6}}
-
-    /* ====== FOOTER ====== */
+    /* ===== FOOTER ===== */
     footer{
-      position:absolute; bottom:10px; left:0; right:0;
-      text-align:center; font-size:10px; letter-spacing:.3em;
-      opacity:.6;
+      position:absolute; bottom:10px; width:100%; text-align:center;
+      font-size:10px; letter-spacing:.3em; opacity:.6;
     }
 
   </style>
@@ -171,32 +119,51 @@
 <body>
   <div class="device">
     <div class="glass">
-      <div class="wire left"></div>
-      <div class="wire right"></div>
 
       <header>
         <div class="logo">STARK · OS</div>
-        <div class="status">ONLINE · ARC 98%</div>
+        <div>5G ▪ ARC 97%</div>
       </header>
 
+      <!-- ARC REACTOR INFO HUB -->
       <div class="core">
         <div class="ring"></div>
         <div class="ring"></div>
         <div class="ring"></div>
-        <div class="pulse"></div>
+        <div class="core-info">
+          <div class="time" id="time">12:45</div>
+          <div class="weather">☀ 24°C · Clear</div>
+          <div class="location">ISTANBUL, TR</div>
+        </div>
       </div>
 
-      <section class="hud">
-        <div class="btn"><div class="icon"></div><div class="label">COMMS</div></div>
-        <div class="btn"><div class="icon"></div><div class="label">MAP</div></div>
-        <div class="btn"><div class="icon"></div><div class="label">AI CORE</div></div>
-        <div class="btn"><div class="icon"></div><div class="label">ARMORY</div></div>
-        <div class="btn"><div class="icon"></div><div class="label">ENERGY</div></div>
-        <div class="btn"><div class="icon"></div><div class="label">SETTINGS</div></div>
+      <!-- APP GRID -->
+      <section class="apps">
+        <div class="app"><div class="icon"></div><div class="label">PHONE</div></div>
+        <div class="app"><div class="icon"></div><div class="label">MESSAGES</div></div>
+        <div class="app"><div class="icon"></div><div class="label">CONTACTS</div></div>
+        <div class="app"><div class="icon"></div><div class="label">CAMERA</div></div>
+        <div class="app"><div class="icon"></div><div class="label">MAPS</div></div>
+        <div class="app"><div class="icon"></div><div class="label">MUSIC</div></div>
+        <div class="app"><div class="icon"></div><div class="label">BROWSER</div></div>
+        <div class="app"><div class="icon"></div><div class="label">MAIL</div></div>
+        <div class="app"><div class="icon"></div><div class="label">SETTINGS</div></div>
       </section>
 
       <footer>STARK INDUSTRIES · AUTHORIZED USER</footer>
     </div>
   </div>
+
+  <script>
+    function updateTime(){
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      document.getElementById('time').textContent = `${h}:${m}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
 </body>
 </html>
+
