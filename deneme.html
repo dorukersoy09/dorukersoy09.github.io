@@ -3,29 +3,29 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Stark Industries · Glass Phone OS v1.2</title>
+<title>Stark Industries · Glass Phone OS v1.3</title>
 <style>
 :root{--neon:#00f6ff;--neon-soft:rgba(0,246,255,.35);--amber:#ffb300;--bg:#03070a}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:radial-gradient(1200px 800px at 50% 20%,#0a1a22,var(--bg));font-family:'Segoe UI',system-ui;color:#e8feff;overflow:hidden}
-.device{position:absolute;inset:0;display:grid;place-items:center;perspective:1200px}
+.device{position:absolute;inset:0;display:grid;place-items:center;perspective:1400px}
 .glass{width:360px;height:760px;border-radius:28px;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.02));backdrop-filter:blur(18px)saturate(140%);box-shadow:0 0 0 1px rgba(255,255,255,.18) inset,0 40px 120px rgba(0,0,0,.65),0 0 60px var(--neon-soft);transform:rotateX(6deg) rotateY(-8deg);animation:float 6s ease-in-out infinite}
 @keyframes float{0%,100%{transform:rotateX(6deg) rotateY(-8deg)}50%{transform:rotateX(4deg) rotateY(-6deg) translateY(-10px)}}
 header{display:flex;justify-content:space-between;align-items:center;padding:16px;font-size:11px;border-bottom:1px solid rgba(255,255,255,.12)}
 .logo{letter-spacing:.25em;font-weight:700;color:var(--neon);text-shadow:0 0 10px var(--neon)}
 /* ARC CORE */
-.core{position:absolute;top:100px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;display:grid;place-items:center;filter:drop-shadow(0 0 25px var(--neon));transition:.4s ease}
+.core{position:absolute;top:100px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;display:grid;place-items:center;filter:drop-shadow(0 0 25px var(--neon));transition:.4s ease;z-index:5}
 .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,246,255,.4);animation:spin 14s linear infinite}
 .ring:nth-child(2){inset:14px;animation-duration:9s;border-color:rgba(255,179,0,.5)}
 .ring:nth-child(3){inset:28px;animation-duration:22s}
 @keyframes spin{to{transform:rotate(360deg)}}
 .core-info{text-align:center;z-index:2}
-.time{font-size:26px;letter-spacing:.1em}
+.time{font-size:26px}
 .weather{font-size:11px;opacity:.85}
 .location{font-size:10px;opacity:.6}
 .listening .ring{border-color:var(--amber);animation-duration:4s}
-/* ENERGY */
-.energy{position:absolute;top:60px;right:18px;font-size:10px;opacity:.8}
+/* ORBIT MULTITASK */
+.orbit{position:absolute;width:80px;height:80px;border-radius:18px;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);display:grid;place-items:center;font-size:10px;letter-spacing:.15em;box-shadow:0 0 20px var(--neon-soft)}
 /* APPS */
 .apps{position:absolute;inset:0;padding:360px 18px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .app{height:96px;border-radius:16px;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(10px);transition:.25s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -33,57 +33,50 @@ header{display:flex;justify-content:space-between;align-items:center;padding:16p
 .icon{width:34px;height:34px;border-radius:50%;border:2px solid var(--neon);margin-bottom:8px;position:relative}
 .icon::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 12px var(--neon)}
 .label{font-size:11px;letter-spacing:.15em}
-/* APP LAYER */
-.app-view{position:absolute;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:.4s ease}
+/* APP VIEW */
+.app-view{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:.4s ease}
 .app-view.active{opacity:1;pointer-events:auto}
-.app-panel{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:85%;height:65%;border-radius:22px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:18px;letter-spacing:.2em}
-/* AR CAMERA */
-.ar{background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.85)),radial-gradient(circle at center,rgba(0,246,255,.2),transparent 70%)}
-/* HOLOGRAM MODE */
-.hologram{transform:rotateX(18deg) rotateY(-18deg) scale(1.05)}
+.app-panel{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:85%;height:65%;border-radius:22px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);display:grid;place-items:center;overflow:hidden}
+video{width:100%;height:100%;object-fit:cover}
 footer{position:absolute;bottom:10px;width:100%;text-align:center;font-size:10px;letter-spacing:.3em;opacity:.6}
 </style>
 </head>
 <body>
-<div class="device">
-<div class="glass" id="glass">
-<header><div class="logo">STARK · OS</div><div>5G ▪ ARC <span id="arc">100</span>%</div></header>
-<div class="energy" id="energy">ENERGY STABLE</div>
-<div class="core" id="core">
-<div class="ring"></div><div class="ring"></div><div class="ring"></div>
-<div class="core-info"><div class="time" id="time"></div><div class="weather" id="weather">☀ Clear</div><div class="location">ISTANBUL, TR</div></div>
-</div>
+<div class="device"><div class="glass" id="glass">
+<header><div class="logo">STARK · OS</div><div>ARC <span id="arc">100</span>%</div></header>
+<div class="core" id="core"><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+<div class="core-info"><div class="time" id="time"></div><div class="weather" id="weather">--</div><div class="location" id="location">LOCATING...</div></div></div>
 <section class="apps">
-<div class="app" data-app="PHONE"><div class="icon"></div><div class="label">PHONE</div></div>
-<div class="app" data-app="MESSAGES"><div class="icon"></div><div class="label">MESSAGES</div></div>
-<div class="app" data-app="CONTACTS"><div class="icon"></div><div class="label">CONTACTS</div></div>
 <div class="app" data-app="CAMERA"><div class="icon"></div><div class="label">CAMERA</div></div>
 <div class="app" data-app="MAPS"><div class="icon"></div><div class="label">MAPS</div></div>
+<div class="app" data-app="MESSAGES"><div class="icon"></div><div class="label">MESSAGES</div></div>
 <div class="app" data-app="MUSIC"><div class="icon"></div><div class="label">MUSIC</div></div>
 <div class="app" data-app="BROWSER"><div class="icon"></div><div class="label">BROWSER</div></div>
-<div class="app" data-app="MAIL"><div class="icon"></div><div class="label">MAIL</div></div>
 <div class="app" data-app="SETTINGS"><div class="icon"></div><div class="label">SETTINGS</div></div>
 </section>
-<div class="app-view" id="appView"><div class="app-panel" id="panel">APP</div></div>
+<div class="app-view" id="appView"><div class="app-panel" id="panel"></div></div>
 <footer>STARK INDUSTRIES · AUTHORIZED USER</footer>
 </div></div>
 <script>
 /* TIME */
-const timeEl=document.getElementById('time');function tick(){const d=new Date();timeEl.textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}tick();setInterval(tick,1000)
-/* WEATHER */
-const weatherEl=document.getElementById('weather');const wx=['☀ Clear','⛅ Cloudy','🌧 Rain','⚡ Storm'];setInterval(()=>weatherEl.textContent=wx[Math.floor(Math.random()*wx.length)],7000)
-/* ENERGY ECONOMY */
-let arc=100;const arcEl=document.getElementById('arc');setInterval(()=>{arc=Math.max(0,arc-0.05);arcEl.textContent=Math.floor(arc)},1000)
-/* APPS */
-const view=document.getElementById('appView');const panel=document.getElementById('panel');const glass=document.getElementById('glass');document.querySelectorAll('.app').forEach(a=>a.onclick=()=>openApp(a.dataset.app))
-function openApp(name){panel.textContent=name;view.classList.add('active');panel.className='app-panel';arc-=1;if(name==='CAMERA')panel.classList.add('ar');if(name==='MAPS')core.style.transform='translateX(-50%) rotate(15deg)';}
-view.onclick=()=>{view.classList.remove('active');core.style.transform='translateX(-50%)'}
-/* VOICE */
-const core=document.getElementById('core');core.onmousedown=()=>core.classList.add('listening');core.onmouseup=()=>core.classList.remove('listening')
-/* GESTURE NAV */
-let startY=null;glass.addEventListener('touchstart',e=>startY=e.touches[0].clientY);glass.addEventListener('touchend',e=>{if(startY&&startY-e.changedTouches[0].clientY>120)view.classList.remove('active')})
-/* HOLOGRAM MODE */
-document.addEventListener('keydown',e=>{if(e.key==='h')glass.classList.toggle('hologram')})
+const timeEl=time;function tick(){const d=new Date();timeEl.textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}tick();setInterval(tick,1000)
+/* GPS + WEATHER */
+const locEl=document.getElementById('location');const wxEl=document.getElementById('weather');navigator.geolocation.getCurrentPosition(p=>{const {latitude,longitude}=p.coords;locEl.textContent=`${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`).then(r=>r.json()).then(d=>{wxEl.textContent=`${d.current_weather.temperature}°C · WIND ${d.current_weather.windspeed}`})})
+/* ENERGY */
+let arc=100;const arcEl=document.getElementById('arc');setInterval(()=>{arc=Math.max(0,arc-0.03);arcEl.textContent=Math.floor(arc)},1000)
+/* APPS + MULTITASK ORBIT */
+const view=document.getElementById('appView');const panel=document.getElementById('panel');const core=document.getElementById('core');let orbits=[];
+document.querySelectorAll('.app').forEach(a=>a.onclick=()=>openApp(a.dataset.app))
+function openApp(name){panel.innerHTML='';view.classList.add('active');arc-=1;
+ if(name==='CAMERA'){const v=document.createElement('video');v.autoplay=true;navigator.mediaDevices.getUserMedia({video:true}).then(s=>v.srcObject=s);panel.appendChild(v)}
+ else{panel.textContent=name}
+ if(orbits.length<3){const o=document.createElement('div');o.className='orbit';o.textContent=name;glass.appendChild(o);orbits.push(o)}
+}
+view.onclick=()=>view.classList.remove('active')
+/* ORBIT ANIMATION */
+let angle=0;setInterval(()=>{angle+=0.02;orbits.forEach((o,i)=>{const r=130+20*i;o.style.left=`${180+Math.cos(angle+i)*r}px`;o.style.top=`${260+Math.sin(angle+i)*r}px`})},30)
+/* JARVIS VOICE */
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(SpeechRecognition){const rec=new SpeechRecognition();rec.continuous=true;core.onmousedown=()=>{core.classList.add('listening');rec.start()};core.onmouseup=()=>{core.classList.remove('listening');rec.stop()};rec.onresult=e=>{const t=e.results[e.results.length-1][0].transcript.toLowerCase();if(t.includes('camera'))openApp('CAMERA');if(t.includes('maps'))openApp('MAPS')}}
 </script>
 </body>
 </html>
