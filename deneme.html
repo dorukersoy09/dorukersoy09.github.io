@@ -1,82 +1,786 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Stark Industries · Glass Phone OS v1.3</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atomic Habits — Prototype</title>
 <style>
-:root{--neon:#00f6ff;--neon-soft:rgba(0,246,255,.35);--amber:#ffb300;--bg:#03070a}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:radial-gradient(1200px 800px at 50% 20%,#0a1a22,var(--bg));font-family:'Segoe UI',system-ui;color:#e8feff;overflow:hidden}
-.device{position:absolute;inset:0;display:grid;place-items:center;perspective:1400px}
-.glass{width:360px;height:760px;border-radius:28px;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.02));backdrop-filter:blur(18px)saturate(140%);box-shadow:0 0 0 1px rgba(255,255,255,.18) inset,0 40px 120px rgba(0,0,0,.65),0 0 60px var(--neon-soft);transform:rotateX(6deg) rotateY(-8deg);animation:float 6s ease-in-out infinite}
-@keyframes float{0%,100%{transform:rotateX(6deg) rotateY(-8deg)}50%{transform:rotateX(4deg) rotateY(-6deg) translateY(-10px)}}
-header{display:flex;justify-content:space-between;align-items:center;padding:16px;font-size:11px;border-bottom:1px solid rgba(255,255,255,.12)}
-.logo{letter-spacing:.25em;font-weight:700;color:var(--neon);text-shadow:0 0 10px var(--neon)}
-/* ARC CORE */
-.core{position:absolute;top:100px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;display:grid;place-items:center;filter:drop-shadow(0 0 25px var(--neon));transition:.4s ease;z-index:5}
-.ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,246,255,.4);animation:spin 14s linear infinite}
-.ring:nth-child(2){inset:14px;animation-duration:9s;border-color:rgba(255,179,0,.5)}
-.ring:nth-child(3){inset:28px;animation-duration:22s}
-@keyframes spin{to{transform:rotate(360deg)}}
-.core-info{text-align:center;z-index:2}
-.time{font-size:26px}
-.weather{font-size:11px;opacity:.85}
-.location{font-size:10px;opacity:.6}
-.listening .ring{border-color:var(--amber);animation-duration:4s}
-/* ORBIT MULTITASK */
-.orbit{position:absolute;width:80px;height:80px;border-radius:18px;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);display:grid;place-items:center;font-size:10px;letter-spacing:.15em;box-shadow:0 0 20px var(--neon-soft)}
-/* APPS */
-.apps{position:absolute;inset:0;padding:360px 18px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.app{height:96px;border-radius:16px;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(10px);transition:.25s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.app:hover{transform:translateY(-2px);box-shadow:0 0 22px var(--neon-soft),inset 0 0 0 1px var(--neon)}
-.icon{width:34px;height:34px;border-radius:50%;border:2px solid var(--neon);margin-bottom:8px;position:relative}
-.icon::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 12px var(--neon)}
-.label{font-size:11px;letter-spacing:.15em}
-/* APP VIEW */
-.app-view{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:.4s ease}
-.app-view.active{opacity:1;pointer-events:auto}
-.app-panel{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:85%;height:65%;border-radius:22px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);display:grid;place-items:center;overflow:hidden}
-video{width:100%;height:100%;object-fit:cover}
-footer{position:absolute;bottom:10px;width:100%;text-align:center;font-size:10px;letter-spacing:.3em;opacity:.6}
+  :root{
+    --bg-warm-white:#FBF9F5;
+    --card-glass: rgba(255,255,255,0.62);
+    --card-border: rgba(255,255,255,0.9);
+    --emerald: #0E9F6E;
+    --emerald-deep: #067A55;
+    --emerald-tint: #E3F6EE;
+    --indigo: #5B5FE9;
+    --sky: #38BDF8;
+    --orange: #FB923C;
+    --purple: #A78BFA;
+    --ink: #1C1C1E;
+    --ink-soft: #6E6E73;
+    --ink-faint:#B8B8BD;
+    --shadow-soft: 0 8px 30px rgba(28,28,30,0.08);
+    --shadow-card: 0 4px 18px rgba(28,28,30,0.06);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; padding:0; background:#EDEBE6; }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .device{
+    width:390px;
+    height:844px;
+    background: var(--bg-warm-white);
+    border-radius:56px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.35), 0 0 0 12px #0b0b0c, 0 0 0 14px #2b2b2d;
+    overflow:hidden;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .statusbar{
+    height:54px;
+    flex:0 0 auto;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding:0 28px 8px 28px;
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .notch{
+    position:absolute;
+    top:14px; left:50%; transform:translateX(-50%);
+    width:120px; height:28px; background:#0b0b0c; border-radius:20px; z-index:20;
+  }
+
+  .screen{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding: 6px 20px 110px 20px;
+    scrollbar-width:none;
+  }
+  .screen::-webkit-scrollbar{ display:none; }
+
+  .tabbar{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:88px;
+    background: rgba(251,249,245,0.85);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(0,0,0,0.06);
+    display:flex;
+    align-items:flex-start;
+    padding-top:10px;
+    justify-content:space-around;
+    z-index:30;
+  }
+  .tab{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    color: var(--ink-faint);
+    font-size:10.5px; font-weight:600;
+    background:none; border:none; cursor:pointer;
+    width:64px;
+    padding:2px 0;
+  }
+  .tab.active{ color: var(--emerald-deep); }
+  .tab svg{ width:24px; height:24px; }
+
+  h1.page-title{
+    font-size:28px; font-weight:800; letter-spacing:-0.02em; margin:14px 0 4px 0; color:var(--ink);
+  }
+  .page-sub{ color:var(--ink-soft); font-size:14px; margin:0 0 18px 0; }
+
+  .card{
+    background: var(--card-glass);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(14px);
+    padding:20px;
+  }
+
+  /* ---------- HOME ---------- */
+  .streak-hero{
+    background: linear-gradient(160deg, #0E9F6E 0%, #067A55 100%);
+    border-radius: var(--radius-lg);
+    padding: 24px 22px;
+    color:white;
+    position:relative;
+    overflow:hidden;
+    box-shadow: 0 14px 34px rgba(6,122,85,0.35);
+    margin-bottom:16px;
+  }
+  .streak-hero::after{
+    content:"";
+    position:absolute; right:-40px; top:-40px; width:180px; height:180px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
+  }
+  .streak-top{ display:flex; align-items:center; justify-content:space-between; }
+  .streak-label{ font-size:13px; font-weight:600; opacity:0.85; letter-spacing:0.02em; }
+  .streak-count-row{ display:flex; align-items:flex-end; gap:10px; margin-top:6px; }
+  .flame-icon{ width:46px; height:46px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25)); }
+  .streak-number{ font-size:56px; font-weight:800; line-height:1; letter-spacing:-0.02em; }
+  .streak-days{ font-size:16px; font-weight:600; opacity:0.9; padding-bottom:8px; }
+  .streak-meta{ display:flex; gap:18px; margin-top:14px; font-size:12.5px; opacity:0.9; }
+  .streak-meta b{ display:block; font-size:15px; font-weight:700; }
+
+  .week-strip{ display:flex; justify-content:space-between; margin:16px 0 18px 0; }
+  .day-pill{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .day-pill .dow{ font-size:11px; color:var(--ink-faint); font-weight:600; }
+  .day-dot{
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; color:var(--ink-soft);
+    background: rgba(0,0,0,0.04);
+  }
+  .day-dot.done{ background: var(--emerald); color:white; }
+  .day-dot.today{ box-shadow: 0 0 0 2px var(--emerald-deep); color:var(--ink); background:white; }
+
+  .section-head{ display:flex; align-items:center; justify-content:space-between; margin: 22px 0 10px 0; }
+  .section-head h2{ font-size:18px; font-weight:800; color:var(--ink); margin:0; letter-spacing:-0.01em; }
+  .section-head span{ font-size:13px; color:var(--emerald-deep); font-weight:700; }
+
+  .habit-row{
+    display:flex; align-items:center; gap:14px;
+    background: white; border-radius: var(--radius-md);
+    padding:14px 16px; margin-bottom:10px;
+    box-shadow: var(--shadow-card);
+    border:1px solid rgba(0,0,0,0.03);
+    cursor:pointer;
+  }
+  .habit-icon{
+    width:44px; height:44px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; flex:0 0 auto;
+  }
+  .habit-info{ flex:1 1 auto; min-width:0; }
+  .habit-name{ font-size:15px; font-weight:700; color:var(--ink); }
+  .habit-sub{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; display:flex; align-items:center; gap:6px;}
+  .tier-badge{
+    font-size:10px; font-weight:800; padding:2px 7px; border-radius:100px;
+    text-transform:uppercase; letter-spacing:0.03em;
+  }
+  .tier-verified{ background:#E3F6EE; color:var(--emerald-deep); }
+  .tier-timed{ background:#FFF3E4; color:#B4590C; }
+  .tier-self{ background:#EEEEF0; color:var(--ink-soft); }
+  .check-circle{
+    width:30px; height:30px; border-radius:50%; flex:0 0 auto;
+    border:2px solid #DADADD;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .check-circle.done{ background:var(--emerald); border-color:var(--emerald); color:white; }
+
+  .xp-card{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:16px;
+  }
+  .xp-bar-bg{ width:150px; height:8px; background:rgba(0,0,0,0.08); border-radius:10px; overflow:hidden; margin-top:6px;}
+  .xp-bar-fill{ height:100%; background: linear-gradient(90deg, var(--indigo), var(--sky)); border-radius:10px; }
+
+  /* ---------- HABITS LIST PAGE ---------- */
+  .habit-card{
+    background:white; border-radius:var(--radius-md); padding:16px;
+    margin-bottom:12px; box-shadow:var(--shadow-card); border:1px solid rgba(0,0,0,0.03);
+    cursor:pointer;
+  }
+  .habit-card-top{ display:flex; align-items:center; gap:12px; }
+  .ring{
+    width:48px; height:48px; border-radius:50%;
+    background: conic-gradient(var(--emerald) var(--pct,70%), #EEEEF0 0);
+    display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  }
+  .ring-inner{ width:38px; height:38px; border-radius:50%; background:white; display:flex; align-items:center; justify-content:center; font-size:16px; }
+
+  .fab{
+    position:absolute; right:22px; bottom:104px; z-index:25;
+    width:56px; height:56px; border-radius:50%;
+    background: var(--emerald); color:white; font-size:28px; font-weight:400;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 10px 24px rgba(14,159,110,0.4);
+    border:none; cursor:pointer;
+  }
+
+  /* ---------- CALENDAR ---------- */
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-top:10px; }
+  .cal-cell{
+    aspect-ratio:1; border-radius:12px; background:white;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-size:13px; font-weight:600; color:var(--ink); position:relative;
+    box-shadow: var(--shadow-card); cursor:pointer;
+  }
+  .cal-cell.muted{ color:var(--ink-faint); background:transparent; box-shadow:none; }
+  .cal-cell .dots{ display:flex; gap:2px; margin-top:4px; }
+  .cal-cell .dots span{ width:5px; height:5px; border-radius:50%; }
+  .cal-cell.selected{ box-shadow: 0 0 0 2px var(--emerald-deep); }
+
+  .day-detail{ margin-top:18px; }
+  .day-detail-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.05); font-size:14px; }
+  .day-detail-row:last-child{ border-bottom:none; }
+  .day-detail-goal{ color:var(--ink-soft); font-size:12.5px; }
+
+  /* ---------- STATS ---------- */
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px; }
+  .stat-tile{ background:white; border-radius:var(--radius-md); padding:16px; box-shadow:var(--shadow-card); }
+  .stat-tile .val{ font-size:24px; font-weight:800; color:var(--ink); }
+  .stat-tile .lbl{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+
+  .bar-chart{ display:flex; align-items:flex-end; gap:10px; height:120px; margin:14px 0 6px 0; }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .bar{ width:100%; border-radius:8px 8px 4px 4px; background: linear-gradient(180deg, var(--emerald), var(--emerald-deep)); }
+  .bar-lbl{ font-size:10.5px; color:var(--ink-faint); margin-top:6px; font-weight:600; }
+
+  .heatmap{ display:grid; grid-template-columns:repeat(14,1fr); gap:4px; margin-top:10px; }
+  .heat-cell{ aspect-ratio:1; border-radius:4px; }
+
+  /* ---------- PROFILE ---------- */
+  .avatar{
+    width:76px; height:76px; border-radius:50%;
+    background: linear-gradient(135deg, var(--indigo), var(--purple));
+    display:flex; align-items:center; justify-content:center; color:white; font-size:28px; font-weight:800;
+    margin: 6px auto 10px auto;
+  }
+  .profile-name{ text-align:center; font-size:19px; font-weight:800; color:var(--ink); }
+  .profile-sub{ text-align:center; font-size:13px; color:var(--ink-soft); margin-top:2px; }
+  .settings-row{
+    display:flex; align-items:center; justify-content:space-between;
+    background:white; padding:14px 16px; border-radius:var(--radius-md);
+    margin-bottom:10px; font-size:14.5px; font-weight:600; color:var(--ink);
+    box-shadow: var(--shadow-card);
+  }
+  .settings-row .r{ color:var(--ink-faint); font-weight:600; font-size:13px; }
+
+  /* ---------- HABIT DETAIL OVERLAY ---------- */
+  .overlay{
+    position:absolute; inset:0; background: var(--bg-warm-white);
+    z-index:40; display:flex; flex-direction:column;
+    transform: translateY(100%); transition: transform 0.35s cubic-bezier(.25,.9,.3,1);
+  }
+  .overlay.open{ transform: translateY(0); }
+  .overlay-header{
+    display:flex; align-items:center; gap:12px; padding: 54px 20px 10px 20px;
+  }
+  .back-btn{ width:34px; height:34px; border-radius:50%; background:white; box-shadow:var(--shadow-card); display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; }
+  .overlay-body{ flex:1; overflow-y:auto; padding: 8px 20px 40px 20px; }
+
+  .btn-primary{
+    width:100%; padding:16px; border-radius:18px; border:none;
+    background: var(--emerald); color:white; font-size:16px; font-weight:700;
+    cursor:pointer; box-shadow: 0 10px 24px rgba(14,159,110,0.3);
+  }
+  .btn-primary:disabled{ background:#D9D9DC; box-shadow:none; color:#9A9A9E; cursor:not-allowed; }
+  .btn-secondary{
+    width:100%; padding:14px; border-radius:18px; border:1.5px solid rgba(0,0,0,0.1);
+    background:transparent; color:var(--ink); font-size:15px; font-weight:700; margin-top:10px; cursor:pointer;
+  }
+
+  /* ---------- FOCUS SESSION ---------- */
+  .session-overlay{
+    position:absolute; inset:0; background: linear-gradient(180deg, #0E9F6E, #06543A);
+    z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:white; transform: translateY(100%); transition: transform 0.4s cubic-bezier(.25,.9,.3,1);
+    text-align:center; padding:0 30px;
+  }
+  .session-overlay.open{ transform: translateY(0); }
+  .session-tool-label{ font-size:14px; opacity:0.75; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
+  .session-timer{ font-size:64px; font-weight:800; margin:14px 0 6px 0; font-variant-numeric: tabular-nums; transition: color 0.3s; }
+  .session-goal{ font-size:14px; opacity:0.85; }
+  .session-goal.met{ color:#D2FBEB; font-weight:700; }
+  .session-controls{ display:flex; gap:14px; margin-top:34px; width:100%; }
+  .session-btn{
+    flex:1; padding:16px; border-radius:18px; border:none; font-size:15px; font-weight:800; cursor:pointer;
+  }
+  .session-mark{ background:white; color:var(--emerald-deep); }
+  .session-mark:disabled{ background:rgba(255,255,255,0.25); color:rgba(255,255,255,0.5); cursor:not-allowed; }
+  .session-pause{ background:rgba(255,255,255,0.15); color:white; }
+  .session-close{ position:absolute; top:54px; right:24px; background:rgba(255,255,255,0.15); border:none; width:34px; height:34px; border-radius:50%; color:white; font-size:16px; cursor:pointer; }
+  .confetti-note{ font-size:13px; margin-top:18px; opacity:0.85; min-height:18px; }
+
+  .demo-note{ font-size:11px; opacity:0.7; margin-top:6px; }
 </style>
 </head>
 <body>
-<div class="device"><div class="glass" id="glass">
-<header><div class="logo">STARK · OS</div><div>ARC <span id="arc">100</span>%</div></header>
-<div class="core" id="core"><div class="ring"></div><div class="ring"></div><div class="ring"></div>
-<div class="core-info"><div class="time" id="time"></div><div class="weather" id="weather">--</div><div class="location" id="location">LOCATING...</div></div></div>
-<section class="apps">
-<div class="app" data-app="CAMERA"><div class="icon"></div><div class="label">CAMERA</div></div>
-<div class="app" data-app="MAPS"><div class="icon"></div><div class="label">MAPS</div></div>
-<div class="app" data-app="MESSAGES"><div class="icon"></div><div class="label">MESSAGES</div></div>
-<div class="app" data-app="MUSIC"><div class="icon"></div><div class="label">MUSIC</div></div>
-<div class="app" data-app="BROWSER"><div class="icon"></div><div class="label">BROWSER</div></div>
-<div class="app" data-app="SETTINGS"><div class="icon"></div><div class="label">SETTINGS</div></div>
-</section>
-<div class="app-view" id="appView"><div class="app-panel" id="panel"></div></div>
-<footer>STARK INDUSTRIES · AUTHORIZED USER</footer>
-</div></div>
+
+<div class="device">
+  <div class="notch"></div>
+  <div class="statusbar">
+    <span>9:41</span>
+    <span>●●● 5G 🔋</span>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div class="screen" id="screen-home">
+    <h1 class="page-title">Good morning, Alex</h1>
+    <p class="page-sub">Thursday, July 16</p>
+
+    <div class="streak-hero">
+      <div class="streak-top">
+        <div class="streak-label">CURRENT STREAK</div>
+      </div>
+      <div class="streak-count-row">
+        <svg class="flame-icon" viewBox="0 0 24 24" fill="none"><path d="M12 2c1 3-3 4-3 8 0 2.5 2 4 3 4s3-1.5 3-4c0-1-.5-2-1-2.5 1.5.5 3 2.5 3 5.5 0 3.5-2.5 6-6 6s-6-2.5-6-6c0-5 4-7 4-11 1 1 2 2 3 0Z" fill="#FFD59A"/></svg>
+        <span class="streak-number">47</span>
+        <span class="streak-days">days</span>
+      </div>
+      <div class="streak-meta">
+        <div><b>62</b>longest streak</div>
+        <div><b>1 freeze</b>available</div>
+      </div>
+    </div>
+
+    <div class="week-strip">
+      <div class="day-pill"><span class="dow">M</span><div class="day-dot done">✓</div></div>
+      <div class="day-pill"><span class="dow">T</span><div class="day-dot done">✓</div></div>
+      <div class="day-pill"><span class="dow">W</span><div class="day-dot done">✓</div></div>
+      <div class="day-pill"><span class="dow">T</span><div class="day-dot today">16</div></div>
+      <div class="day-pill"><span class="dow">F</span><div class="day-dot">18</div></div>
+      <div class="day-pill"><span class="dow">S</span><div class="day-dot">19</div></div>
+      <div class="day-pill"><span class="dow">S</span><div class="day-dot">20</div></div>
+    </div>
+
+    <div class="section-head"><h2>Today's Habits</h2><span>2 of 4 done</span></div>
+
+    <div class="habit-row" data-action="open-habit" data-habit="sleep">
+      <div class="habit-icon" style="background:#E3F6EE;">🌙</div>
+      <div class="habit-info">
+        <div class="habit-name">Sleep 7+ hours</div>
+        <div class="habit-sub"><span class="tier-badge tier-verified">Verified</span> via Health</div>
+      </div>
+      <div class="check-circle done">✓</div>
+    </div>
+
+    <div class="habit-row" data-action="open-habit" data-habit="spanish">
+      <div class="habit-icon" style="background:#FFF3E4;">🗣️</div>
+      <div class="habit-info">
+        <div class="habit-name">Spanish lesson</div>
+        <div class="habit-sub"><span class="tier-badge tier-timed">Timed</span> goal 10 min · Duolingo</div>
+      </div>
+      <div class="check-circle done">✓</div>
+    </div>
+
+    <div class="habit-row" data-action="open-habit" data-habit="meditate">
+      <div class="habit-icon" style="background:#EDEAFB;">🧘</div>
+      <div class="habit-info">
+        <div class="habit-name">Meditate</div>
+        <div class="habit-sub"><span class="tier-badge tier-timed">Timed</span> goal 10 min · Focus Session</div>
+      </div>
+      <div class="check-circle">&nbsp;</div>
+    </div>
+
+    <div class="habit-row" data-action="open-habit" data-habit="chess">
+      <div class="habit-icon" style="background:#EEEEF0;">♟️</div>
+      <div class="habit-info">
+        <div class="habit-name">Chess puzzle</div>
+        <div class="habit-sub"><span class="tier-badge tier-self">Self‑report</span></div>
+      </div>
+      <div class="check-circle">&nbsp;</div>
+    </div>
+
+    <div class="card xp-card">
+      <div>
+        <div style="font-size:13px; font-weight:700; color:var(--ink-soft);">Level 12</div>
+        <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:64%;"></div></div>
+      </div>
+      <div style="font-size:13px; font-weight:700; color:var(--indigo);">840 / 1200 XP</div>
+    </div>
+  </div>
+
+  <!-- HABITS LIST SCREEN -->
+  <div class="screen" id="screen-habits" style="display:none;">
+    <h1 class="page-title">My Habits</h1>
+    <p class="page-sub">7 active habits</p>
+
+    <div class="habit-card" data-action="open-habit" data-habit="sleep">
+      <div class="habit-card-top">
+        <div class="ring" style="--pct:100%;"><div class="ring-inner">🌙</div></div>
+        <div class="habit-info">
+          <div class="habit-name">Sleep 7+ hours</div>
+          <div class="habit-sub"><span class="tier-badge tier-verified">Verified</span> · 🔥 47</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="habit-card" data-action="open-habit" data-habit="spanish">
+      <div class="habit-card-top">
+        <div class="ring" style="--pct:100%;"><div class="ring-inner">🗣️</div></div>
+        <div class="habit-info">
+          <div class="habit-name">Spanish lesson</div>
+          <div class="habit-sub"><span class="tier-badge tier-timed">Timed</span> · 🔥 22</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="habit-card" data-action="open-habit" data-habit="meditate">
+      <div class="habit-card-top">
+        <div class="ring" style="--pct:0%;"><div class="ring-inner">🧘</div></div>
+        <div class="habit-info">
+          <div class="habit-name">Meditate</div>
+          <div class="habit-sub"><span class="tier-badge tier-timed">Timed</span> · 🔥 9</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="habit-card" data-action="open-habit" data-habit="chess">
+      <div class="habit-card-top">
+        <div class="ring" style="--pct:0%;"><div class="ring-inner">♟️</div></div>
+        <div class="habit-info">
+          <div class="habit-name">Chess puzzle</div>
+          <div class="habit-sub"><span class="tier-badge tier-self">Self‑report</span> · 🔥 5</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="habit-card" style="opacity:0.6;">
+      <div class="habit-card-top">
+        <div class="ring" style="--pct:0%; background:#EEEEF0;"><div class="ring-inner">💧</div></div>
+        <div class="habit-info">
+          <div class="habit-name">Drink water</div>
+          <div class="habit-sub"><span class="tier-badge tier-verified">Verified</span> · 🔥 0</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="fab" data-action="fab">+</button>
+  </div>
+
+  <!-- CALENDAR SCREEN -->
+  <div class="screen" id="screen-calendar" style="display:none;">
+    <h1 class="page-title">Calendar</h1>
+    <p class="page-sub">July 2026</p>
+    <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--ink-faint); padding:0 2px;">
+      <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="day-detail" id="dayDetail"></div>
+  </div>
+
+  <!-- STATS SCREEN -->
+  <div class="screen" id="screen-stats" style="display:none;">
+    <h1 class="page-title">Statistics</h1>
+    <p class="page-sub">Last 7 days</p>
+
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="val">86%</div><div class="lbl">Completion rate</div></div>
+      <div class="stat-tile"><div class="val">47</div><div class="lbl">Current streak</div></div>
+      <div class="stat-tile"><div class="val">62</div><div class="lbl">Longest streak</div></div>
+      <div class="stat-tile"><div class="val">11 min</div><div class="lbl">Avg. session time</div></div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Weekly consistency</div>
+      <div class="bar-chart">
+        <div class="bar-col"><div class="bar" style="height:90%;"></div><div class="bar-lbl">M</div></div>
+        <div class="bar-col"><div class="bar" style="height:100%;"></div><div class="bar-lbl">T</div></div>
+        <div class="bar-col"><div class="bar" style="height:70%;"></div><div class="bar-lbl">W</div></div>
+        <div class="bar-col"><div class="bar" style="height:50%;"></div><div class="bar-lbl">T</div></div>
+        <div class="bar-col"><div class="bar" style="height:0%; background:#EEEEF0;"></div><div class="bar-lbl">F</div></div>
+        <div class="bar-col"><div class="bar" style="height:0%; background:#EEEEF0;"></div><div class="bar-lbl">S</div></div>
+        <div class="bar-col"><div class="bar" style="height:0%; background:#EEEEF0;"></div><div class="bar-lbl">S</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Consistency heatmap</div>
+      <div class="heatmap" id="heatmap"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE SCREEN -->
+  <div class="screen" id="screen-profile" style="display:none;">
+    <h1 class="page-title" style="text-align:center;">Profile</h1>
+    <div class="avatar">A</div>
+    <div class="profile-name">Alex Rivera</div>
+    <div class="profile-sub">Level 12 · Member since Jan 2026</div>
+
+    <div class="section-head"><h2>Account</h2></div>
+    <div class="settings-row">Health Integration <span class="r">Connected ›</span></div>
+    <div class="settings-row">Notifications <span class="r">On ›</span></div>
+    <div class="settings-row">Dark Mode <span class="r">Off ›</span></div>
+
+    <div class="section-head"><h2>Data & Privacy</h2></div>
+    <div class="settings-row">Sync <span class="r">iCloud ›</span></div>
+    <div class="settings-row">Focus Mode <span class="r">›</span></div>
+
+    <div class="section-head"><h2>Subscription</h2></div>
+    <div class="settings-row">Atomic Habits Pro <span class="r">Active ›</span></div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tabbar">
+    <button class="tab active" data-tab="home" data-action="switch-tab" data-tab="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      Home
+    </button>
+    <button class="tab" data-tab="habits" data-action="switch-tab" data-tab="habits">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 12l3 3 5-6"/></svg>
+      Habits
+    </button>
+    <button class="tab" data-tab="calendar" data-action="switch-tab" data-tab="calendar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      Calendar
+    </button>
+    <button class="tab" data-tab="stats" data-action="switch-tab" data-tab="stats">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
+      Stats
+    </button>
+    <button class="tab" data-tab="profile" data-action="switch-tab" data-tab="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6"/></svg>
+      Profile
+    </button>
+  </div>
+
+  <!-- HABIT DETAIL OVERLAY -->
+  <div class="overlay" id="habitOverlay">
+    <div class="overlay-header">
+      <button class="back-btn" data-action="close-habit">←</button>
+    </div>
+    <div class="overlay-body" id="habitOverlayBody"></div>
+  </div>
+
+  <!-- FOCUS SESSION OVERLAY -->
+  <div class="session-overlay" id="sessionOverlay">
+    <button class="session-close" data-action="close-session">✕</button>
+    <div class="session-tool-label" id="sessionToolLabel">TIMER</div>
+    <div class="session-timer" id="sessionTimer">00:00</div>
+    <div class="session-goal" id="sessionGoal">goal: 0:10</div>
+    <div class="demo-note">demo scale — 10s stands in for 10 real minutes</div>
+    <div class="confetti-note" id="confettiNote"></div>
+    <div class="session-controls">
+      <button class="session-btn session-pause" id="pauseBtn" data-action="toggle-pause">Pause</button>
+      <button class="session-btn session-mark" id="markBtn" disabled data-action="mark-complete">Mark Complete</button>
+    </div>
+  </div>
+
+</div>
+
 <script>
-/* TIME */
-const timeEl=time;function tick(){const d=new Date();timeEl.textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}tick();setInterval(tick,1000)
-/* GPS + WEATHER */
-const locEl=document.getElementById('location');const wxEl=document.getElementById('weather');navigator.geolocation.getCurrentPosition(p=>{const {latitude,longitude}=p.coords;locEl.textContent=`${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`).then(r=>r.json()).then(d=>{wxEl.textContent=`${d.current_weather.temperature}°C · WIND ${d.current_weather.windspeed}`})})
-/* ENERGY */
-let arc=100;const arcEl=document.getElementById('arc');setInterval(()=>{arc=Math.max(0,arc-0.03);arcEl.textContent=Math.floor(arc)},1000)
-/* APPS + MULTITASK ORBIT */
-const view=document.getElementById('appView');const panel=document.getElementById('panel');const core=document.getElementById('core');let orbits=[];
-document.querySelectorAll('.app').forEach(a=>a.onclick=()=>openApp(a.dataset.app))
-function openApp(name){panel.innerHTML='';view.classList.add('active');arc-=1;
- if(name==='CAMERA'){const v=document.createElement('video');v.autoplay=true;navigator.mediaDevices.getUserMedia({video:true}).then(s=>v.srcObject=s);panel.appendChild(v)}
- else{panel.textContent=name}
- if(orbits.length<3){const o=document.createElement('div');o.className='orbit';o.textContent=name;glass.appendChild(o);orbits.push(o)}
+// ---------------- TAB NAVIGATION ----------------
+function switchTab(name){
+  document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+  document.getElementById('screen-'+name).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab[data-tab="'+name+'"]').classList.add('active');
 }
-view.onclick=()=>view.classList.remove('active')
-/* ORBIT ANIMATION */
-let angle=0;setInterval(()=>{angle+=0.02;orbits.forEach((o,i)=>{const r=130+20*i;o.style.left=`${180+Math.cos(angle+i)*r}px`;o.style.top=`${260+Math.sin(angle+i)*r}px`})},30)
-/* JARVIS VOICE */
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(SpeechRecognition){const rec=new SpeechRecognition();rec.continuous=true;core.onmousedown=()=>{core.classList.add('listening');rec.start()};core.onmouseup=()=>{core.classList.remove('listening');rec.stop()};rec.onresult=e=>{const t=e.results[e.results.length-1][0].transcript.toLowerCase();if(t.includes('camera'))openApp('CAMERA');if(t.includes('maps'))openApp('MAPS')}}
+
+// ---------------- HABIT DATA ----------------
+const habits = {
+  sleep:   { name:'Sleep 7+ hours', icon:'🌙', tier:'verified', tierLabel:'Verified', desc:'Automatically confirmed via Apple Health sleep data — no action needed.', goalMin:0, mode:'health' },
+  spanish: { name:'Spanish lesson', icon:'🗣️', tier:'timed', tierLabel:'Timed Self‑Report', desc:'Linked to Duolingo. Open the app, do your lesson, then come back and mark it complete.', goalMin:10, mode:'companion', companion:'Duolingo' },
+  meditate:{ name:'Meditate', icon:'🧘', tier:'timed', tierLabel:'Timed Self‑Report', desc:'Focus Session habit. Start the in‑app timer and keep it running for at least the goal time.', goalMin:10, mode:'focus', tool:'Timer' },
+  chess:   { name:'Chess puzzle', icon:'♟️', tier:'self', tierLabel:'Self‑Report', desc:'No verification available for this habit type — mark complete when you\\'re done.', goalMin:0, mode:'self' }
+};
+
+let currentHabit = null;
+
+function openHabit(id){
+  currentHabit = id;
+  const h = habits[id];
+  const tierClass = h.tier === 'verified' ? 'tier-verified' : h.tier === 'timed' ? 'tier-timed' : 'tier-self';
+  let actionHTML = '';
+  if(h.mode === 'health'){
+    actionHTML = `<button class="btn-primary" disabled>Waiting for Health data…</button>
+      <p style="font-size:12.5px; color:var(--ink-soft); margin-top:10px; text-align:center;">This habit completes itself once Apple Health confirms your sleep — nothing to tap.</p>`;
+  } else if(h.mode === 'companion'){
+    actionHTML = `<button class="btn-primary" data-action="start-session" data-mode="companion" data-goal="${h.goalMin}">Open in ${h.companion}</button>`;
+  } else if(h.mode === 'focus'){
+    actionHTML = `<button class="btn-primary" data-action="start-session" data-mode="focus" data-goal="${h.goalMin}" data-tool="${h.tool}">Start ${h.tool}</button>`;
+  } else {
+    actionHTML = `<button class="btn-primary" data-action="quick-complete">Mark Complete</button>`;
+  }
+
+  document.getElementById('habitOverlayBody').innerHTML = `
+    <div style="text-align:center; margin-top:6px;">
+      <div style="font-size:44px; width:84px; height:84px; margin:0 auto 14px auto; border-radius:24px; background:#F1F1EE; display:flex; align-items:center; justify-content:center;">${h.icon}</div>
+      <h1 class="page-title" style="text-align:center; margin-bottom:2px;">${h.name}</h1>
+      <span class="tier-badge ${tierClass}" style="font-size:11px; padding:4px 10px;">${h.tierLabel}</span>
+    </div>
+    <div class="card" style="margin-top:22px;">
+      <p style="font-size:14px; color:var(--ink); line-height:1.5; margin:0;">${h.desc}</p>
+      ${h.goalMin ? `<p style="font-size:13px; color:var(--ink-soft); margin:10px 0 0 0;">Goal: <b style="color:var(--ink);">${h.goalMin} min</b></p>` : ''}
+    </div>
+    <div style="margin-top:22px;">
+      ${actionHTML}
+      <button class="btn-secondary" data-action="close-habit">Close</button>
+    </div>
+  `;
+  document.getElementById('habitOverlay').classList.add('open');
+}
+
+function closeHabit(){
+  document.getElementById('habitOverlay').classList.remove('open');
+}
+
+function quickComplete(){
+  markHabitDoneInLists(currentHabit);
+  closeHabit();
+}
+
+// ---------------- FOCUS SESSION TIMER ----------------
+let sessionSeconds = 0;
+let sessionGoalSeconds = 10; // demo scale: seconds stand in for minutes
+let sessionInterval = null;
+let sessionPaused = false;
+let sessionMode = 'focus';
+
+function startSession(mode, goalMin, tool){
+  sessionMode = mode;
+  sessionSeconds = 0;
+  sessionGoalSeconds = goalMin; // 1 demo-second = 1 real minute
+  sessionPaused = false;
+  document.getElementById('sessionToolLabel').textContent = mode === 'companion' ? 'AWAY IN DUOLINGO' : (tool || 'TIMER').toUpperCase();
+  document.getElementById('sessionGoal').textContent = 'goal: 0:' + String(sessionGoalSeconds).padStart(2,'0');
+  document.getElementById('sessionGoal').classList.remove('met');
+  document.getElementById('sessionTimer').style.color = 'white';
+  document.getElementById('markBtn').disabled = true;
+  document.getElementById('confettiNote').textContent = '';
+  document.getElementById('pauseBtn').style.display = mode === 'companion' ? 'none' : 'flex';
+  document.getElementById('pauseBtn').textContent = 'Pause';
+  updateTimerDisplay();
+  document.getElementById('sessionOverlay').classList.add('open');
+
+  clearInterval(sessionInterval);
+  sessionInterval = setInterval(() => {
+    if(!sessionPaused){
+      sessionSeconds++;
+      updateTimerDisplay();
+      if(sessionSeconds === sessionGoalSeconds){
+        onThresholdReached();
+      }
+      if(mode === 'companion' && sessionSeconds >= sessionGoalSeconds){
+        clearInterval(sessionInterval); // companion mode stops measuring at threshold
+      }
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(sessionSeconds/60);
+  const s = sessionSeconds%60;
+  document.getElementById('sessionTimer').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+
+function onThresholdReached(){
+  document.getElementById('sessionTimer').style.color = '#D2FBEB';
+  document.getElementById('sessionGoal').textContent = 'goal reached ✓';
+  document.getElementById('sessionGoal').classList.add('met');
+  document.getElementById('markBtn').disabled = false;
+  document.getElementById('confettiNote').textContent = sessionMode === 'companion' ? "Come back anytime — you're good to mark it done." : "Keep going if you want, or wrap up whenever you're ready.";
+}
+
+function togglePause(){
+  sessionPaused = !sessionPaused;
+  document.getElementById('pauseBtn').textContent = sessionPaused ? 'Resume' : 'Pause';
+}
+
+function markComplete(){
+  clearInterval(sessionInterval);
+  document.getElementById('confettiNote').textContent = '🔥 Streak extended! Logged ' + document.getElementById('sessionTimer').textContent + (sessionMode === 'companion' ? ' (goal met)' : '');
+  setTimeout(() => {
+    closeSession(true);
+    markHabitDoneInLists(currentHabit);
+    closeHabit();
+  }, 900);
+}
+
+function closeSession(completed){
+  clearInterval(sessionInterval);
+  document.getElementById('sessionOverlay').classList.remove('open');
+}
+
+function markHabitDoneInLists(id){
+  // simple visual feedback across rows matching this habit, if present
+  document.querySelectorAll('.habit-row').forEach(row => {
+    if(row.getAttribute('onclick') === `openHabit('${id}')`){
+      const c = row.querySelector('.check-circle');
+      if(c){ c.classList.add('done'); c.textContent = '✓'; }
+    }
+  });
+}
+
+// ---------------- CALENDAR ----------------
+function buildCalendar(){
+  const grid = document.getElementById('calGrid');
+  const daysInMonth = 31;
+  const startOffset = 3; // July 1 2026 is a Wednesday
+  const completedDays = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+  let html = '';
+  for(let i=0;i<startOffset;i++){ html += `<div class="cal-cell muted"></div>`; }
+  for(let d=1; d<=daysInMonth; d++){
+    const done = completedDays.includes(d);
+    const isToday = d === 16;
+    html += `<div class="cal-cell ${isToday?'selected':''}" data-action="select-day" data-day="${d}">
+      ${d}
+      <div class="dots">${done ? '<span style="background:var(--emerald);"></span><span style="background:var(--indigo);"></span>' : ''}</div>
+    </div>`;
+  }
+  grid.innerHTML = html;
+  selectDay(16);
+}
+
+function selectDay(d, el){
+  document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('selected'));
+  if(el){ el.classList.add('selected'); }
+  const detail = document.getElementById('dayDetail');
+  if(d === 16){
+    detail.innerHTML = `
+      <div class="section-head" style="margin-top:6px;"><h2>July ${d}</h2></div>
+      <div class="day-detail-row"><span>🌙 Sleep 7+ hours</span><span class="day-detail-goal">7h 40m ✓</span></div>
+      <div class="day-detail-row"><span>🗣️ Spanish lesson</span><span class="day-detail-goal">goal met ✓</span></div>
+      <div class="day-detail-row"><span>🧘 Meditate</span><span class="day-detail-goal">not yet</span></div>
+      <div class="day-detail-row"><span>♟️ Chess puzzle</span><span class="day-detail-goal">not yet</span></div>`;
+  } else {
+    detail.innerHTML = `<div class="section-head" style="margin-top:6px;"><h2>July ${d}</h2></div>
+      <p style="color:var(--ink-soft); font-size:13.5px;">3 of 4 habits completed.</p>`;
+  }
+}
+
+function buildHeatmap(){
+  const hm = document.getElementById('heatmap');
+  let html = '';
+  for(let i=0;i<70;i++){
+    const r = Math.random();
+    const color = r > 0.8 ? '#067A55' : r > 0.55 ? '#0E9F6E' : r > 0.3 ? '#B7E9D6' : '#EEEEF0';
+    html += `<div class="heat-cell" style="background:${color};"></div>`;
+  }
+  hm.innerHTML = html;
+}
+
+function sendPromptMsg(){
+  if(window.sendPrompt){ sendPrompt("Let's design the Create Habit screen next."); }
+}
+
+buildCalendar();
+buildHeatmap();
+
+// ---------------- DELEGATED CLICK HANDLING ----------------
+document.addEventListener('click', function(e){
+  const el = e.target.closest('[data-action]');
+  if(!el) return;
+  const action = el.dataset.action;
+  if(action === 'switch-tab'){ switchTab(el.dataset.tab); }
+  else if(action === 'open-habit'){ openHabit(el.dataset.habit); }
+  else if(action === 'close-habit'){ closeHabit(); }
+  else if(action === 'close-session'){ closeSession(false); }
+  else if(action === 'toggle-pause'){ togglePause(); }
+  else if(action === 'mark-complete'){ markComplete(); }
+  else if(action === 'quick-complete'){ quickComplete(); }
+  else if(action === 'fab'){ sendPromptMsg(); }
+  else if(action === 'select-day'){ selectDay(parseInt(el.dataset.day, 10), el); }
+  else if(action === 'start-session'){ startSession(el.dataset.mode, parseInt(el.dataset.goal, 10), el.dataset.tool); }
+});
 </script>
 </body>
 </html>
