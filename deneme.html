@@ -7,8 +7,11 @@
 <style>
   :root{
     --bg-warm-white:#FBF9F5;
+    --surface: #FFFFFF;
     --card-glass: rgba(255,255,255,0.62);
     --card-border: rgba(255,255,255,0.9);
+    --tabbar-bg: rgba(251,249,245,0.85);
+    --tabbar-border: rgba(0,0,0,0.06);
     --emerald: #0E9F6E;
     --emerald-deep: #067A55;
     --emerald-tint: #E3F6EE;
@@ -21,10 +24,47 @@
     --ink-faint:#B8B8BD;
     --shadow-soft: 0 8px 30px rgba(28,28,30,0.08);
     --shadow-card: 0 4px 18px rgba(28,28,30,0.06);
+    --hairline: rgba(0,0,0,0.06);
+    --hairline-strong: rgba(0,0,0,0.1);
+    --track: rgba(0,0,0,0.08);
+    --track-soft: rgba(0,0,0,0.04);
+    --neutral-chip: #EEEEF0;
+    --control-border: #DADADD;
+    --tier-timed-bg: #FFF3E4;
+    --tier-timed-text: #B4590C;
+    --pastel-lavender: #EDEAFB;
+    --btn-disabled-bg: #D9D9DC;
+    --btn-disabled-text: #9A9A9E;
     --radius-lg: 28px;
     --radius-md: 18px;
     --radius-sm: 12px;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .device[data-theme="dark"]{
+    --bg-warm-white:#17181C;
+    --surface:#212227;
+    --card-glass: rgba(33,34,39,0.62);
+    --card-border: rgba(255,255,255,0.08);
+    --tabbar-bg: rgba(23,24,28,0.85);
+    --tabbar-border: rgba(255,255,255,0.08);
+    --ink:#F2F2F4;
+    --ink-soft:#A6A6AC;
+    --ink-faint:#5C5C61;
+    --shadow-soft: 0 8px 30px rgba(0,0,0,0.4);
+    --shadow-card: 0 4px 18px rgba(0,0,0,0.35);
+    --emerald-tint: rgba(14,159,110,0.18);
+    --hairline: rgba(255,255,255,0.10);
+    --hairline-strong: rgba(255,255,255,0.16);
+    --track: rgba(255,255,255,0.14);
+    --track-soft: rgba(255,255,255,0.08);
+    --neutral-chip: rgba(255,255,255,0.08);
+    --control-border: #4A4A4E;
+    --tier-timed-bg: rgba(255,165,60,0.16);
+    --tier-timed-text: #FFB870;
+    --pastel-lavender: rgba(167,139,250,0.20);
+    --btn-disabled-bg: #3A3B40;
+    --btn-disabled-text: #8E8E93;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -44,6 +84,7 @@
     background: var(--bg-warm-white);
     border-radius:56px;
     box-shadow: 0 30px 80px rgba(0,0,0,0.35), 0 0 0 12px #0b0b0c, 0 0 0 14px #2b2b2d;
+    transition: background 0.3s ease;
     overflow:hidden;
     position:relative;
     display:flex;
@@ -79,9 +120,9 @@
     position:absolute;
     bottom:0; left:0; right:0;
     height:88px;
-    background: rgba(251,249,245,0.85);
+    background: var(--tabbar-bg);
     backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(0,0,0,0.06);
+    border-top: 1px solid var(--tabbar-border);
     display:flex;
     align-items:flex-start;
     padding-top:10px;
@@ -115,7 +156,7 @@
 
   /* ---------- HOME ---------- */
   .streak-hero{
-    background: linear-gradient(160deg, #0E9F6E 0%, #067A55 100%);
+    background: linear-gradient(160deg, var(--emerald) 0%, var(--emerald-deep) 100%);
     border-radius: var(--radius-lg);
     padding: 24px 22px;
     color:white;
@@ -123,6 +164,7 @@
     overflow:hidden;
     box-shadow: 0 14px 34px rgba(6,122,85,0.35);
     margin-bottom:16px;
+    transition: background 0.3s ease;
   }
   .streak-hero::after{
     content:"";
@@ -145,10 +187,13 @@
     width:34px; height:34px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     font-size:13px; font-weight:700; color:var(--ink-soft);
-    background: rgba(0,0,0,0.04);
+    background: var(--track-soft);
+    cursor:pointer; transition: box-shadow 0.15s ease, transform 0.15s ease;
   }
   .day-dot.done{ background: var(--emerald); color:white; }
-  .day-dot.today{ box-shadow: 0 0 0 2px var(--emerald-deep); color:var(--ink); background:white; }
+  .day-dot.today{ box-shadow: 0 0 0 2px var(--emerald-deep); color:var(--ink); background:var(--surface); }
+  .day-dot.future{ color:var(--ink-faint); }
+  .day-dot.week-selected{ box-shadow: 0 0 0 2px var(--indigo); transform: scale(1.06); }
 
   .section-head{ display:flex; align-items:center; justify-content:space-between; margin: 22px 0 10px 0; }
   .section-head h2{ font-size:18px; font-weight:800; color:var(--ink); margin:0; letter-spacing:-0.01em; }
@@ -156,10 +201,10 @@
 
   .habit-row{
     display:flex; align-items:center; gap:14px;
-    background: white; border-radius: var(--radius-md);
+    background: var(--surface); border-radius: var(--radius-md);
     padding:14px 16px; margin-bottom:10px;
     box-shadow: var(--shadow-card);
-    border:1px solid rgba(0,0,0,0.03);
+    border:1px solid var(--hairline);
     cursor:pointer;
   }
   .habit-icon{
@@ -174,12 +219,12 @@
     font-size:10px; font-weight:800; padding:2px 7px; border-radius:100px;
     text-transform:uppercase; letter-spacing:0.03em;
   }
-  .tier-verified{ background:#E3F6EE; color:var(--emerald-deep); }
-  .tier-timed{ background:#FFF3E4; color:#B4590C; }
-  .tier-self{ background:#EEEEF0; color:var(--ink-soft); }
+  .tier-verified{ background:var(--emerald-tint); color:var(--emerald-deep); }
+  .tier-timed{ background:var(--tier-timed-bg); color:var(--tier-timed-text); }
+  .tier-self{ background:var(--neutral-chip); color:var(--ink-soft); }
   .check-circle{
     width:30px; height:30px; border-radius:50%; flex:0 0 auto;
-    border:2px solid #DADADD;
+    border:2px solid var(--control-border);
     display:flex; align-items:center; justify-content:center;
   }
   .check-circle.done{ background:var(--emerald); border-color:var(--emerald); color:white; }
@@ -188,36 +233,118 @@
     display:flex; align-items:center; justify-content:space-between;
     margin-top:16px;
   }
-  .xp-bar-bg{ width:150px; height:8px; background:rgba(0,0,0,0.08); border-radius:10px; overflow:hidden; margin-top:6px;}
+  .xp-bar-bg{ width:150px; height:8px; background:var(--track); border-radius:10px; overflow:hidden; margin-top:6px;}
   .xp-bar-fill{ height:100%; background: linear-gradient(90deg, var(--indigo), var(--sky)); border-radius:10px; }
 
   /* ---------- HABITS LIST PAGE ---------- */
   .habit-card{
-    background:white; border-radius:var(--radius-md); padding:16px;
-    margin-bottom:12px; box-shadow:var(--shadow-card); border:1px solid rgba(0,0,0,0.03);
+    background:var(--surface); border-radius:var(--radius-md); padding:16px;
+    margin-bottom:12px; box-shadow:var(--shadow-card); border:1px solid var(--hairline);
     cursor:pointer;
   }
   .habit-card-top{ display:flex; align-items:center; gap:12px; }
   .ring{
     width:48px; height:48px; border-radius:50%;
-    background: conic-gradient(var(--emerald) var(--pct,70%), #EEEEF0 0);
+    background: conic-gradient(var(--emerald) var(--pct,70%), var(--neutral-chip) 0);
     display:flex; align-items:center; justify-content:center; flex:0 0 auto;
   }
-  .ring-inner{ width:38px; height:38px; border-radius:50%; background:white; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .ring-inner{ width:38px; height:38px; border-radius:50%; background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:16px; }
 
-  .fab{
+  .fab-wrap{
     position:absolute; right:22px; bottom:104px; z-index:25;
+    display:flex; flex-direction:column; align-items:flex-end; gap:14px;
+  }
+  .fab{
     width:56px; height:56px; border-radius:50%;
-    background: var(--emerald); color:white; font-size:28px; font-weight:400;
+    background: var(--emerald); color:white; font-size:26px; font-weight:400;
     display:flex; align-items:center; justify-content:center;
     box-shadow: 0 10px 24px rgba(14,159,110,0.4);
     border:none; cursor:pointer;
+    order:99; /* keep FAB at the bottom of the column */
   }
+  .fab-icon{ display:inline-block; transition: transform 0.35s cubic-bezier(.34,1.4,.64,1); }
+  .fab-icon.rotated{ transform: rotate(180deg); }
+
+  .fab-option{
+    display:flex; align-items:center; gap:10px;
+    opacity:0; transform: translateY(10px) scale(0.9);
+    pointer-events:none;
+    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(.34,1.4,.64,1);
+  }
+  .fab-wrap.open .fab-option{ opacity:1; transform: translateY(0) scale(1); pointer-events:auto; }
+  .fab-wrap.open .fab-option[data-delay="1"]{ transition-delay: 0.04s; }
+  .fab-wrap.open .fab-option[data-delay="2"]{ transition-delay: 0.1s; }
+
+  .fab-option-label{
+    background:var(--surface); color:var(--ink); font-size:13px; font-weight:700;
+    padding:8px 14px; border-radius:100px; box-shadow: var(--shadow-card);
+    white-space:nowrap;
+  }
+  .fab-mini{
+    width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:18px;
+    box-shadow: var(--shadow-card);
+  }
+  .fab-mini.quick{ background:var(--surface); color:var(--indigo); }
+  .fab-mini.full{ background:var(--emerald-tint); color:var(--emerald-deep); }
+
+  .sheet-backdrop{
+    position:absolute; inset:0; background:rgba(0,0,0,0.25); z-index:44;
+    opacity:0; pointer-events:none; transition:opacity 0.25s;
+  }
+  .sheet-backdrop.open{ opacity:1; pointer-events:auto; }
+  .sheet{
+    position:absolute; left:0; right:0; bottom:0; z-index:45;
+    background: var(--bg-warm-white);
+    border-radius: 26px 26px 0 0;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+    padding: 12px 20px 28px 20px;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(.25,.9,.3,1);
+  }
+  .sheet.open{ transform: translateY(0); }
+  .sheet-handle{ width:36px; height:4px; background:var(--control-border); border-radius:10px; margin:0 auto 14px auto; }
+  .sheet-title{ font-size:16px; font-weight:800; color:var(--ink); margin:0 0 12px 0; }
+  .sheet-input{
+    width:100%; padding:14px 16px; border-radius:14px; border:1.5px solid var(--hairline-strong);
+    font-size:15px; margin-bottom:14px; background:var(--surface); color:var(--ink);
+  }
+  .sheet-input:focus{ outline:none; border-color:var(--emerald); }
+
+  .form-label{ font-size:12.5px; font-weight:700; color:var(--ink-soft); margin: 14px 0 6px 0; }
+  .icon-picker{ display:flex; gap:8px; flex-wrap:wrap; }
+  .icon-opt{
+    width:40px; height:40px; border-radius:12px; background:var(--surface); border:1.5px solid var(--hairline-strong);
+    display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer;
+  }
+  .icon-opt.selected{ border-color:var(--emerald); background:var(--emerald-tint); }
+  .color-picker{ display:flex; gap:10px; }
+  .color-opt{ width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid transparent; }
+  .color-opt.selected{ border-color:var(--ink); }
+
+  .toggle-switch{
+    width:50px; height:30px; border-radius:100px; background:var(--control-border); position:relative;
+    cursor:pointer; flex:0 0 auto; transition: background 0.25s ease; border:none;
+  }
+  .toggle-switch::after{
+    content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%;
+    background:white; box-shadow:0 2px 6px rgba(0,0,0,0.2); transition: transform 0.25s cubic-bezier(.34,1.4,.64,1);
+  }
+  .toggle-switch.on{ background: var(--emerald); }
+  .toggle-switch.on::after{ transform: translateX(20px); }
+
+  .accent-grid{ display:flex; gap:14px; flex-wrap:wrap; margin-top:4px; }
+  .accent-opt{
+    width:40px; height:40px; border-radius:50%; cursor:pointer; border:3px solid transparent;
+    display:flex; align-items:center; justify-content:center; font-size:15px; color:white;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .accent-opt.selected{ border-color:var(--ink); transform: scale(1.08); }
 
   /* ---------- CALENDAR ---------- */
   .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-top:10px; }
   .cal-cell{
-    aspect-ratio:1; border-radius:12px; background:white;
+    aspect-ratio:1; border-radius:12px; background:var(--surface);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     font-size:13px; font-weight:600; color:var(--ink); position:relative;
     box-shadow: var(--shadow-card); cursor:pointer;
@@ -228,13 +355,13 @@
   .cal-cell.selected{ box-shadow: 0 0 0 2px var(--emerald-deep); }
 
   .day-detail{ margin-top:18px; }
-  .day-detail-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.05); font-size:14px; }
+  .day-detail-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--hairline); font-size:14px; }
   .day-detail-row:last-child{ border-bottom:none; }
   .day-detail-goal{ color:var(--ink-soft); font-size:12.5px; }
 
   /* ---------- STATS ---------- */
   .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px; }
-  .stat-tile{ background:white; border-radius:var(--radius-md); padding:16px; box-shadow:var(--shadow-card); }
+  .stat-tile{ background:var(--surface); border-radius:var(--radius-md); padding:16px; box-shadow:var(--shadow-card); }
   .stat-tile .val{ font-size:24px; font-weight:800; color:var(--ink); }
   .stat-tile .lbl{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
 
@@ -257,10 +384,11 @@
   .profile-sub{ text-align:center; font-size:13px; color:var(--ink-soft); margin-top:2px; }
   .settings-row{
     display:flex; align-items:center; justify-content:space-between;
-    background:white; padding:14px 16px; border-radius:var(--radius-md);
+    background:var(--surface); padding:14px 16px; border-radius:var(--radius-md);
     margin-bottom:10px; font-size:14.5px; font-weight:600; color:var(--ink);
     box-shadow: var(--shadow-card);
   }
+  .settings-row[data-action]{ cursor:pointer; }
   .settings-row .r{ color:var(--ink-faint); font-weight:600; font-size:13px; }
 
   /* ---------- HABIT DETAIL OVERLAY ---------- */
@@ -273,7 +401,7 @@
   .overlay-header{
     display:flex; align-items:center; gap:12px; padding: 54px 20px 10px 20px;
   }
-  .back-btn{ width:34px; height:34px; border-radius:50%; background:white; box-shadow:var(--shadow-card); display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; }
+  .back-btn{ width:34px; height:34px; border-radius:50%; background:var(--surface); color:var(--ink); box-shadow:var(--shadow-card); border:1px solid var(--hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; }
   .overlay-body{ flex:1; overflow-y:auto; padding: 8px 20px 40px 20px; }
 
   .btn-primary{
@@ -281,9 +409,9 @@
     background: var(--emerald); color:white; font-size:16px; font-weight:700;
     cursor:pointer; box-shadow: 0 10px 24px rgba(14,159,110,0.3);
   }
-  .btn-primary:disabled{ background:#D9D9DC; box-shadow:none; color:#9A9A9E; cursor:not-allowed; }
+  .btn-primary:disabled{ background:var(--btn-disabled-bg); box-shadow:none; color:var(--btn-disabled-text); cursor:not-allowed; }
   .btn-secondary{
-    width:100%; padding:14px; border-radius:18px; border:1.5px solid rgba(0,0,0,0.1);
+    width:100%; padding:14px; border-radius:18px; border:1.5px solid var(--hairline-strong);
     background:transparent; color:var(--ink); font-size:15px; font-weight:700; margin-top:10px; cursor:pointer;
   }
 
@@ -307,9 +435,87 @@
   .session-mark:disabled{ background:rgba(255,255,255,0.25); color:rgba(255,255,255,0.5); cursor:not-allowed; }
   .session-pause{ background:rgba(255,255,255,0.15); color:white; }
   .session-close{ position:absolute; top:54px; right:24px; background:rgba(255,255,255,0.15); border:none; width:34px; height:34px; border-radius:50%; color:white; font-size:16px; cursor:pointer; }
+  .session-cancel-link{
+    background:none; border:none; color:rgba(255,255,255,0.65); font-size:13px; font-weight:600;
+    margin-top:22px; cursor:pointer; text-decoration:underline; text-underline-offset:3px;
+  }
+
+  .live-session-bar{
+    position:absolute; top:58px; left:16px; right:16px; z-index:35;
+    background: var(--emerald); color:white; border-radius:18px;
+    padding:8px 8px 8px 14px; display:flex; align-items:center; gap:6px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+    font-weight:700; font-size:13px;
+    transform: translateY(-200px); transition: transform 0.32s cubic-bezier(.25,.9,.3,1);
+  }
+  .live-session-bar.visible{ transform: translateY(0); }
+  .live-session-tap{ display:flex; align-items:center; gap:10px; flex:1; min-width:0; cursor:pointer; padding:2px 0; }
+  .live-session-tap span:first-child{ font-size:20px; }
+  .live-session-text{ display:flex; flex-direction:column; flex:1; min-width:0; }
+  .live-session-text span:first-child{ font-size:13.5px; }
+  .live-session-sub{ font-size:10.5px; font-weight:600; opacity:0.8; }
+  .live-session-bar .chevron{ font-size:16px; opacity:0.8; }
+  .live-session-dismiss{
+    width:28px; height:28px; border-radius:50%; border:none; flex:0 0 auto;
+    background: rgba(255,255,255,0.2); color:white; font-size:13px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
   .confetti-note{ font-size:13px; margin-top:18px; opacity:0.85; min-height:18px; }
 
   .demo-note{ font-size:11px; opacity:0.7; margin-top:6px; }
+
+  /* ---------- STREAK CELEBRATION: localized flame pop + glow pulse + embers ---------- */
+  .celebration-layer{
+    position:absolute; inset:0; z-index:80; pointer-events:none;
+  }
+
+  #flameIcon{ transform-origin:50% 60%; will-change: transform; }
+  #flameIcon.flame-pop{
+    animation: flame-pop-kf 0.72s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes flame-pop-kf{
+    0%{   transform: scale(1) rotate(0deg); }
+    28%{  transform: scale(1.42) rotate(-6deg); }
+    50%{  transform: scale(0.9)  rotate(4deg); }
+    72%{  transform: scale(1.12) rotate(-2deg); }
+    100%{ transform: scale(1) rotate(0deg); }
+  }
+
+  .flame-glow-pulse{
+    position:absolute; width:100px; height:100px; border-radius:50%;
+    transform:translate(-50%,-50%) scale(0.3); opacity:0;
+    background: radial-gradient(circle, rgba(255,225,160,0.85) 0%, rgba(255,150,60,0.5) 45%, rgba(255,90,20,0) 75%);
+    will-change: transform, opacity;
+  }
+  .flame-glow-pulse.pulse{
+    animation: glow-pulse-kf 0.85s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  @keyframes glow-pulse-kf{
+    0%{   transform:translate(-50%,-50%) scale(0.3); opacity:0; }
+    30%{  transform:translate(-50%,-50%) scale(1.1);  opacity:0.85; }
+    100%{ transform:translate(-50%,-50%) scale(1.7);  opacity:0; }
+  }
+
+  .ember-particle{
+    position:absolute; width:8px; height:8px; border-radius:50%;
+    background: radial-gradient(circle, #FFF3D6 0%, #FFB25E 55%, rgba(255,120,30,0) 80%);
+    will-change: transform, opacity;
+    pointer-events:none;
+  }
+
+  .streak-hero.celebrating{ animation: hero-glow-soft 0.7s ease-out; }
+  @keyframes hero-glow-soft{
+    0%{   box-shadow: 0 14px 34px rgba(6,122,85,0.35); }
+    35%{  box-shadow: 0 14px 46px rgba(255,190,90,0.5); }
+    100%{ box-shadow: 0 14px 34px rgba(6,122,85,0.35); }
+  }
+
+  .streak-number.bump{ animation: streak-bump 0.55s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes streak-bump{
+    0%{ transform: scale(1); }
+    35%{ transform: scale(1.35); }
+    100%{ transform: scale(1); }
+  }
 </style>
 </head>
 <body>
@@ -326,13 +532,13 @@
     <h1 class="page-title">Good morning, Alex</h1>
     <p class="page-sub">Thursday, July 16</p>
 
-    <div class="streak-hero">
+    <div class="streak-hero" id="streakHero">
       <div class="streak-top">
         <div class="streak-label">CURRENT STREAK</div>
       </div>
       <div class="streak-count-row">
-        <svg class="flame-icon" viewBox="0 0 24 24" fill="none"><path d="M12 2c1 3-3 4-3 8 0 2.5 2 4 3 4s3-1.5 3-4c0-1-.5-2-1-2.5 1.5.5 3 2.5 3 5.5 0 3.5-2.5 6-6 6s-6-2.5-6-6c0-5 4-7 4-11 1 1 2 2 3 0Z" fill="#FFD59A"/></svg>
-        <span class="streak-number">47</span>
+        <svg class="flame-icon" id="flameIcon" viewBox="0 0 24 24" fill="none"><path d="M12 2c1 3-3 4-3 8 0 2.5 2 4 3 4s3-1.5 3-4c0-1-.5-2-1-2.5 1.5.5 3 2.5 3 5.5 0 3.5-2.5 6-6 6s-6-2.5-6-6c0-5 4-7 4-11 1 1 2 2 3 0Z" fill="#FFD59A"/></svg>
+        <span class="streak-number" id="streakNumber">47</span>
         <span class="streak-days">days</span>
       </div>
       <div class="streak-meta">
@@ -342,19 +548,21 @@
     </div>
 
     <div class="week-strip">
-      <div class="day-pill"><span class="dow">M</span><div class="day-dot done">✓</div></div>
-      <div class="day-pill"><span class="dow">T</span><div class="day-dot done">✓</div></div>
-      <div class="day-pill"><span class="dow">W</span><div class="day-dot done">✓</div></div>
-      <div class="day-pill"><span class="dow">T</span><div class="day-dot today">16</div></div>
-      <div class="day-pill"><span class="dow">F</span><div class="day-dot">18</div></div>
-      <div class="day-pill"><span class="dow">S</span><div class="day-dot">19</div></div>
-      <div class="day-pill"><span class="dow">S</span><div class="day-dot">20</div></div>
+      <div class="day-pill"><span class="dow">M</span><div class="day-dot done" data-action="select-week-day" data-day="13">✓</div></div>
+      <div class="day-pill"><span class="dow">T</span><div class="day-dot done" data-action="select-week-day" data-day="14">✓</div></div>
+      <div class="day-pill"><span class="dow">W</span><div class="day-dot done" data-action="select-week-day" data-day="15">✓</div></div>
+      <div class="day-pill"><span class="dow">T</span><div class="day-dot today" data-action="select-week-day" data-day="16">16</div></div>
+      <div class="day-pill"><span class="dow">F</span><div class="day-dot future" data-action="select-week-day" data-day="17">17</div></div>
+      <div class="day-pill"><span class="dow">S</span><div class="day-dot future" data-action="select-week-day" data-day="18">18</div></div>
+      <div class="day-pill"><span class="dow">S</span><div class="day-dot future" data-action="select-week-day" data-day="19">19</div></div>
     </div>
+
+    <div class="card" id="homeDayDetail" style="margin-bottom:16px;"></div>
 
     <div class="section-head"><h2>Today's Habits</h2><span>2 of 4 done</span></div>
 
     <div class="habit-row" data-action="open-habit" data-habit="sleep">
-      <div class="habit-icon" style="background:#E3F6EE;">🌙</div>
+      <div class="habit-icon" style="background:var(--emerald-tint);">🌙</div>
       <div class="habit-info">
         <div class="habit-name">Sleep 7+ hours</div>
         <div class="habit-sub"><span class="tier-badge tier-verified">Verified</span> via Health</div>
@@ -363,7 +571,7 @@
     </div>
 
     <div class="habit-row" data-action="open-habit" data-habit="spanish">
-      <div class="habit-icon" style="background:#FFF3E4;">🗣️</div>
+      <div class="habit-icon" style="background:var(--tier-timed-bg);">🗣️</div>
       <div class="habit-info">
         <div class="habit-name">Spanish lesson</div>
         <div class="habit-sub"><span class="tier-badge tier-timed">Timed</span> goal 10 min · Duolingo</div>
@@ -372,7 +580,7 @@
     </div>
 
     <div class="habit-row" data-action="open-habit" data-habit="meditate">
-      <div class="habit-icon" style="background:#EDEAFB;">🧘</div>
+      <div class="habit-icon" style="background:var(--pastel-lavender);">🧘</div>
       <div class="habit-info">
         <div class="habit-name">Meditate</div>
         <div class="habit-sub"><span class="tier-badge tier-timed">Timed</span> goal 10 min · Focus Session</div>
@@ -381,7 +589,7 @@
     </div>
 
     <div class="habit-row" data-action="open-habit" data-habit="chess">
-      <div class="habit-icon" style="background:#EEEEF0;">♟️</div>
+      <div class="habit-icon" style="background:var(--neutral-chip);">♟️</div>
       <div class="habit-info">
         <div class="habit-name">Chess puzzle</div>
         <div class="habit-sub"><span class="tier-badge tier-self">Self‑report</span></div>
@@ -445,7 +653,7 @@
 
     <div class="habit-card" style="opacity:0.6;">
       <div class="habit-card-top">
-        <div class="ring" style="--pct:0%; background:#EEEEF0;"><div class="ring-inner">💧</div></div>
+        <div class="ring" style="--pct:0%; background:var(--neutral-chip);"><div class="ring-inner">💧</div></div>
         <div class="habit-info">
           <div class="habit-name">Drink water</div>
           <div class="habit-sub"><span class="tier-badge tier-verified">Verified</span> · 🔥 0</div>
@@ -453,7 +661,17 @@
       </div>
     </div>
 
-    <button class="fab" data-action="fab">+</button>
+    <div class="fab-wrap" id="fabWrap">
+      <div class="fab-option" data-delay="2">
+        <span class="fab-option-label">Quick Add</span>
+        <button class="fab-mini quick" data-action="fab-quick-add">✎</button>
+      </div>
+      <div class="fab-option" data-delay="1">
+        <span class="fab-option-label">Create Habit</span>
+        <button class="fab-mini full" data-action="fab-create-habit">⚙</button>
+      </div>
+      <button class="fab" data-action="fab-toggle"><span class="fab-icon" id="fabIcon">+</span></button>
+    </div>
   </div>
 
   <!-- CALENDAR SCREEN -->
@@ -480,27 +698,31 @@
     </div>
 
     <div class="card">
-      <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Weekly consistency</div>
+      <div style="font-weight:800; font-size:15px; margin-bottom:4px; color:var(--ink);">Weekly consistency</div>
       <div class="bar-chart">
         <div class="bar-col"><div class="bar" style="height:90%;"></div><div class="bar-lbl">M</div></div>
         <div class="bar-col"><div class="bar" style="height:100%;"></div><div class="bar-lbl">T</div></div>
         <div class="bar-col"><div class="bar" style="height:70%;"></div><div class="bar-lbl">W</div></div>
         <div class="bar-col"><div class="bar" style="height:50%;"></div><div class="bar-lbl">T</div></div>
-        <div class="bar-col"><div class="bar" style="height:0%; background:#EEEEF0;"></div><div class="bar-lbl">F</div></div>
-        <div class="bar-col"><div class="bar" style="height:0%; background:#EEEEF0;"></div><div class="bar-lbl">S</div></div>
-        <div class="bar-col"><div class="bar" style="height:0%; background:#EEEEF0;"></div><div class="bar-lbl">S</div></div>
+        <div class="bar-col"><div class="bar" style="height:0%; background:var(--neutral-chip);"></div><div class="bar-lbl">F</div></div>
+        <div class="bar-col"><div class="bar" style="height:0%; background:var(--neutral-chip);"></div><div class="bar-lbl">S</div></div>
+        <div class="bar-col"><div class="bar" style="height:0%; background:var(--neutral-chip);"></div><div class="bar-lbl">S</div></div>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Consistency heatmap</div>
+      <div style="font-weight:800; font-size:15px; margin-bottom:4px; color:var(--ink);">Consistency heatmap</div>
       <div class="heatmap" id="heatmap"></div>
     </div>
   </div>
 
   <!-- PROFILE SCREEN -->
   <div class="screen" id="screen-profile" style="display:none;">
-    <h1 class="page-title" style="text-align:center;">Profile</h1>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:14px;">
+      <div style="width:34px;"></div>
+      <h1 class="page-title" style="text-align:center; margin:0;">Profile</h1>
+      <button class="back-btn" data-action="open-settings" aria-label="Settings">⚙️</button>
+    </div>
     <div class="avatar">A</div>
     <div class="profile-name">Alex Rivera</div>
     <div class="profile-sub">Level 12 · Member since Jan 2026</div>
@@ -508,7 +730,7 @@
     <div class="section-head"><h2>Account</h2></div>
     <div class="settings-row">Health Integration <span class="r">Connected ›</span></div>
     <div class="settings-row">Notifications <span class="r">On ›</span></div>
-    <div class="settings-row">Dark Mode <span class="r">Off ›</span></div>
+    <div class="settings-row" data-action="open-settings">Appearance <span class="r">›</span></div>
 
     <div class="section-head"><h2>Data & Privacy</h2></div>
     <div class="settings-row">Sync <span class="r">iCloud ›</span></div>
@@ -552,7 +774,7 @@
 
   <!-- FOCUS SESSION OVERLAY -->
   <div class="session-overlay" id="sessionOverlay">
-    <button class="session-close" data-action="close-session">✕</button>
+    <button class="session-close" data-action="minimize-session" aria-label="Minimize — keeps running">↓</button>
     <div class="session-tool-label" id="sessionToolLabel">TIMER</div>
     <div class="session-timer" id="sessionTimer">00:00</div>
     <div class="session-goal" id="sessionGoal">goal: 0:10</div>
@@ -562,7 +784,104 @@
       <button class="session-btn session-pause" id="pauseBtn" data-action="toggle-pause">Pause</button>
       <button class="session-btn session-mark" id="markBtn" disabled data-action="mark-complete">Mark Complete</button>
     </div>
+    <button class="session-cancel-link" data-action="cancel-session">Cancel session</button>
   </div>
+
+  <!-- LIVE SESSION BAR (persists across tabs while a session runs in the background) -->
+  <div class="live-session-bar" id="liveSessionBar">
+    <div class="live-session-tap" data-action="resume-session">
+      <span id="liveSessionIcon">⏱️</span>
+      <div class="live-session-text">
+        <span id="liveSessionLabel">Session</span>
+        <span class="live-session-sub">running in background</span>
+      </div>
+      <span id="liveSessionTime">00:00</span>
+      <span class="chevron">›</span>
+    </div>
+    <button class="live-session-dismiss" data-action="cancel-session" aria-label="Cancel session">✕</button>
+  </div>
+
+  <!-- QUICK ADD SHEET -->
+  <div class="sheet" id="quickAddSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Quick add a habit</div>
+    <input class="sheet-input" id="quickAddInput" type="text" placeholder="e.g. Stretch for 5 minutes">
+    <button class="btn-primary" data-action="submit-quick-add">Add Habit</button>
+    <button class="btn-secondary" data-action="close-quick-add">Cancel</button>
+  </div>
+
+  <!-- CREATE HABIT OVERLAY -->
+  <div class="overlay" id="createHabitOverlay">
+    <div class="overlay-header">
+      <button class="back-btn" data-action="close-create-habit">←</button>
+    </div>
+    <div class="overlay-body">
+      <h1 class="page-title">Create Habit</h1>
+      <p class="page-sub">Set it up once — we'll help you keep it.</p>
+
+      <div class="form-label">Name</div>
+      <input class="sheet-input" id="newHabitName" type="text" placeholder="e.g. Read before bed">
+
+      <div class="form-label">Description</div>
+      <input class="sheet-input" type="text" placeholder="Optional details">
+
+      <div class="form-label">Minutes required</div>
+      <input class="sheet-input" type="number" placeholder="10">
+
+      <div class="form-label">Icon</div>
+      <input class="sheet-input" id="newHabitIcon" type="text" placeholder="Pick an emoji, e.g. 📖" maxlength="2">
+
+      <div class="form-label">Color</div>
+      <div class="color-picker">
+        <div class="color-opt selected" style="background:var(--emerald);"></div>
+        <div class="color-opt" style="background:var(--indigo);"></div>
+        <div class="color-opt" style="background:var(--sky);"></div>
+        <div class="color-opt" style="background:var(--orange);"></div>
+        <div class="color-opt" style="background:var(--purple);"></div>
+      </div>
+
+      <div style="margin-top:26px;">
+        <button class="btn-primary" data-action="submit-create-habit">Save Habit</button>
+        <button class="btn-secondary" data-action="close-create-habit">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS OVERLAY -->
+  <div class="overlay" id="settingsOverlay">
+    <div class="overlay-header">
+      <button class="back-btn" data-action="close-settings">←</button>
+    </div>
+    <div class="overlay-body">
+      <h1 class="page-title">Settings</h1>
+      <p class="page-sub">Make it look like yours.</p>
+
+      <div class="section-head" style="margin-top:8px;"><h2>Appearance</h2></div>
+
+      <div class="settings-row" style="cursor:default;">
+        <span>Dark Mode</span>
+        <button class="toggle-switch" id="darkModeToggle" data-action="toggle-dark-mode" aria-label="Toggle dark mode"></button>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <div style="font-weight:800; font-size:14.5px; margin-bottom:12px; color:var(--ink);">Accent Color</div>
+        <div class="accent-grid" id="accentGrid">
+          <div class="accent-opt selected" data-action="set-accent" data-accent="emerald" style="background:#0E9F6E;">✓</div>
+          <div class="accent-opt" data-action="set-accent" data-accent="indigo" style="background:#5B5FE9;"></div>
+          <div class="accent-opt" data-action="set-accent" data-accent="sky" style="background:#38BDF8;"></div>
+          <div class="accent-opt" data-action="set-accent" data-accent="orange" style="background:#FB923C;"></div>
+          <div class="accent-opt" data-action="set-accent" data-accent="purple" style="background:#A78BFA;"></div>
+        </div>
+        <p style="font-size:12.5px; color:var(--ink-soft); margin:14px 0 0 0;">This becomes the color of your streak, checkmarks, and primary buttons throughout the app.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="celebration-layer" id="celebrationLayer">
+    <div class="flame-glow-pulse" id="flameGlow"></div>
+  </div>
+
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
 
 </div>
 
@@ -590,7 +909,10 @@ function openHabit(id){
   const h = habits[id];
   const tierClass = h.tier === 'verified' ? 'tier-verified' : h.tier === 'timed' ? 'tier-timed' : 'tier-self';
   let actionHTML = '';
-  if(h.mode === 'health'){
+  if(sessionActive && sessionHabitId === id){
+    actionHTML = `<button class="btn-primary" data-action="resume-session">Resume Session (${document.getElementById('sessionTimer').textContent} so far)</button>
+      <p style="font-size:12.5px; color:var(--ink-soft); margin-top:10px; text-align:center;">This is already running in the background — tap to bring it back up.</p>`;
+  } else if(h.mode === 'health'){
     actionHTML = `<button class="btn-primary" disabled>Waiting for Health data…</button>
       <p style="font-size:12.5px; color:var(--ink-soft); margin-top:10px; text-align:center;">This habit completes itself once Apple Health confirms your sleep — nothing to tap.</p>`;
   } else if(h.mode === 'companion'){
@@ -603,7 +925,7 @@ function openHabit(id){
 
   document.getElementById('habitOverlayBody').innerHTML = `
     <div style="text-align:center; margin-top:6px;">
-      <div style="font-size:44px; width:84px; height:84px; margin:0 auto 14px auto; border-radius:24px; background:#F1F1EE; display:flex; align-items:center; justify-content:center;">${h.icon}</div>
+      <div style="font-size:44px; width:84px; height:84px; margin:0 auto 14px auto; border-radius:24px; background:var(--surface); display:flex; align-items:center; justify-content:center;">${h.icon}</div>
       <h1 class="page-title" style="text-align:center; margin-bottom:2px;">${h.name}</h1>
       <span class="tier-badge ${tierClass}" style="font-size:11px; padding:4px 10px;">${h.tierLabel}</span>
     </div>
@@ -634,12 +956,22 @@ let sessionGoalSeconds = 10; // demo scale: seconds stand in for minutes
 let sessionInterval = null;
 let sessionPaused = false;
 let sessionMode = 'focus';
+let sessionActive = false;
+let sessionHabitId = null;
+let sessionIcon = '⏱️';
+let sessionLabelText = 'Session';
 
 function startSession(mode, goalMin, tool){
   sessionMode = mode;
   sessionSeconds = 0;
   sessionGoalSeconds = goalMin; // 1 demo-second = 1 real minute
   sessionPaused = false;
+  sessionActive = true;
+  sessionHabitId = currentHabit;
+  const h = habits[currentHabit] || {};
+  sessionIcon = h.icon || '⏱️';
+  sessionLabelText = h.name || 'Session';
+
   document.getElementById('sessionToolLabel').textContent = mode === 'companion' ? 'AWAY IN DUOLINGO' : (tool || 'TIMER').toUpperCase();
   document.getElementById('sessionGoal').textContent = 'goal: 0:' + String(sessionGoalSeconds).padStart(2,'0');
   document.getElementById('sessionGoal').classList.remove('met');
@@ -649,13 +981,16 @@ function startSession(mode, goalMin, tool){
   document.getElementById('pauseBtn').style.display = mode === 'companion' ? 'none' : 'flex';
   document.getElementById('pauseBtn').textContent = 'Pause';
   updateTimerDisplay();
+  hideLiveBar();
   document.getElementById('sessionOverlay').classList.add('open');
+  closeHabit();
 
   clearInterval(sessionInterval);
   sessionInterval = setInterval(() => {
     if(!sessionPaused){
       sessionSeconds++;
       updateTimerDisplay();
+      updateLiveBarTime();
       if(sessionSeconds === sessionGoalSeconds){
         onThresholdReached();
       }
@@ -678,36 +1013,247 @@ function onThresholdReached(){
   document.getElementById('sessionGoal').classList.add('met');
   document.getElementById('markBtn').disabled = false;
   document.getElementById('confettiNote').textContent = sessionMode === 'companion' ? "Come back anytime — you're good to mark it done." : "Keep going if you want, or wrap up whenever you're ready.";
+  updateLiveBarTime();
 }
 
 function togglePause(){
   sessionPaused = !sessionPaused;
   document.getElementById('pauseBtn').textContent = sessionPaused ? 'Resume' : 'Pause';
+  updateLiveBarTime();
+}
+
+// SINGLE SOURCE OF TRUTH for ending a session. Every path that can end a session
+// (Mark Complete, Cancel) must call this — nothing else is allowed to leave
+// sessionInterval running or sessionActive true.
+function endSessionState(){
+  clearInterval(sessionInterval);
+  sessionInterval = null;
+  sessionActive = false;
+  sessionPaused = false;
+  sessionHabitId = null;
+  hideLiveBar();
 }
 
 function markComplete(){
-  clearInterval(sessionInterval);
-  document.getElementById('confettiNote').textContent = '🔥 Streak extended! Logged ' + document.getElementById('sessionTimer').textContent + (sessionMode === 'companion' ? ' (goal met)' : '');
+  const completedHabitId = sessionHabitId; // snapshot before teardown clears it
+  const wasCompanion = sessionMode === 'companion';
+  const loggedTime = document.getElementById('sessionTimer').textContent;
+  document.getElementById('confettiNote').textContent = '🔥 Streak extended! Logged ' + loggedTime + (wasCompanion ? ' (goal met)' : '');
+  endSessionState();
   setTimeout(() => {
-    closeSession(true);
-    markHabitDoneInLists(currentHabit);
-    closeHabit();
+    hideSessionOverlay();
+    markHabitDoneInLists(completedHabitId);
+    // clear residual session-screen text once it's fully off-screen so nothing stale shows next time
+    setTimeout(resetSessionUI, 450);
   }, 900);
 }
 
-function closeSession(completed){
-  clearInterval(sessionInterval);
+function resetSessionUI(){
+  document.getElementById('confettiNote').textContent = '';
+  document.getElementById('sessionGoal').classList.remove('met');
+  document.getElementById('sessionTimer').style.color = 'white';
+  document.getElementById('markBtn').disabled = true;
+}
+
+// Hides the full-screen session UI but keeps the timer running — user can navigate
+// anywhere in the app and the session keeps counting until Pause or Cancel is pressed.
+function minimizeSession(){
+  hideSessionOverlay();
+  showLiveBar();
+}
+
+// Brings the full-screen session UI back without resetting or interrupting the timer.
+function resumeSession(){
+  document.getElementById('sessionOverlay').classList.add('open');
+  hideLiveBar();
+  closeHabit();
+}
+
+// Fully stops and discards the in-progress session — distinct from minimizing.
+function cancelSession(){
+  endSessionState();
+  hideSessionOverlay();
+  resetSessionUI();
+}
+
+function hideSessionOverlay(){
   document.getElementById('sessionOverlay').classList.remove('open');
+}
+
+function showLiveBar(){
+  const bar = document.getElementById('liveSessionBar');
+  document.getElementById('liveSessionIcon').textContent = sessionIcon;
+  document.getElementById('liveSessionLabel').textContent = sessionLabelText;
+  updateLiveBarTime();
+  bar.classList.add('visible');
+}
+
+function hideLiveBar(){
+  document.getElementById('liveSessionBar').classList.remove('visible');
+}
+
+function updateLiveBarTime(){
+  const bar = document.getElementById('liveSessionBar');
+  if(!bar.classList.contains('visible')) return;
+  const m = Math.floor(sessionSeconds/60);
+  const s = sessionSeconds%60;
+  const timeStr = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  document.getElementById('liveSessionTime').textContent = sessionPaused ? (timeStr + ' · paused') : timeStr;
 }
 
 function markHabitDoneInLists(id){
   // simple visual feedback across rows matching this habit, if present
   document.querySelectorAll('.habit-row').forEach(row => {
-    if(row.getAttribute('onclick') === `openHabit('${id}')`){
+    if(row.dataset.habit === id){
       const c = row.querySelector('.check-circle');
       if(c){ c.classList.add('done'); c.textContent = '✓'; }
     }
   });
+  checkAllHabitsComplete();
+}
+
+// ---------------- STREAK CELEBRATION ----------------
+let streakCelebrated = false;
+
+function checkAllHabitsComplete(){
+  const rows = document.querySelectorAll('#screen-home .habit-row');
+  const total = rows.length;
+  const done = document.querySelectorAll('#screen-home .habit-row .check-circle.done').length;
+  if(total > 0 && done === total && !streakCelebrated){
+    streakCelebrated = true;
+    celebrateStreak();
+  }
+}
+
+function celebrateStreak(){
+  // Duolingo-style celebrations always happen on the streak screen — mirror that
+  // so the flame is guaranteed to be on screen no matter where the user currently is.
+  switchTab('home');
+
+  // Wait a frame for the tab switch to paint before measuring the flame's real position.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const device = document.querySelector('.device');
+    const flame = document.getElementById('flameIcon');
+    const deviceRect = device.getBoundingClientRect();
+    const flameRect = flame.getBoundingClientRect();
+    const cx = flameRect.left + flameRect.width / 2 - deviceRect.left;
+    const cy = flameRect.top + flameRect.height / 2 - deviceRect.top;
+
+    // Glow pulse, centered exactly on the real flame.
+    const glow = document.getElementById('flameGlow');
+    glow.style.left = cx + 'px';
+    glow.style.top = cy + 'px';
+    glow.classList.remove('pulse');
+    void glow.offsetWidth; // force reflow so the animation can replay
+    glow.classList.add('pulse');
+
+    // The flame itself does a lively spring bounce.
+    flame.classList.remove('flame-pop');
+    void flame.offsetWidth;
+    flame.classList.add('flame-pop');
+
+    // A soft, brief warm glow on the whole card — subtle, not distracting.
+    const hero = document.getElementById('streakHero');
+    hero.classList.remove('celebrating');
+    void hero.offsetWidth;
+    hero.classList.add('celebrating');
+
+    // Embers burst outward right at the peak of the bounce.
+    spawnEmberParticles(cx, cy);
+
+    // Number ticks up in sync with the bounce's peak, not at the very start.
+    setTimeout(bumpStreakNumber, 160);
+  }));
+}
+
+function spawnEmberParticles(cx, cy){
+  const layer = document.getElementById('celebrationLayer');
+  const count = 9;
+  for(let i = 0; i < count; i++){
+    const p = document.createElement('div');
+    p.className = 'ember-particle';
+    p.style.left = cx + 'px';
+    p.style.top = cy + 'px';
+    layer.appendChild(p);
+
+    const dx = (Math.random() * 2 - 1) * 65;       // spread left/right
+    const dy = -(35 + Math.random() * 70);          // always drifts upward, like embers
+    const duration = 620 + Math.random() * 260;
+    const size = 5 + Math.random() * 5;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+
+    const anim = p.animate([
+      { transform: 'translate(-50%,-50%) translate(0,0) scale(1)', opacity: 1 },
+      { transform: `translate(-50%,-50%) translate(${dx * 0.55}px, ${dy * 0.55}px) scale(0.85)`, opacity: 1, offset: 0.5 },
+      { transform: `translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(0.25)`, opacity: 0 }
+    ], { duration, easing: 'cubic-bezier(.2,.75,.3,1)', fill: 'forwards' });
+
+    anim.onfinish = () => p.remove();
+    // Safety-net cleanup in case onfinish doesn't fire in some environments.
+    setTimeout(() => { if(p.isConnected) p.remove(); }, duration + 300);
+  }
+}
+
+function bumpStreakNumber(){
+  const el = document.getElementById('streakNumber');
+  const next = parseInt(el.textContent, 10) + 1;
+  el.textContent = next;
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+  setTimeout(() => el.classList.remove('bump'), 600);
+}
+
+// ---------------- HOME WEEK STRIP ----------------
+const homeDayData = {
+  13: [
+    { icon:'🌙', name:'Sleep 7+ hours', status:'7h 05m ✓' },
+    { icon:'🗣️', name:'Spanish lesson', status:'goal met ✓' },
+    { icon:'🧘', name:'Meditate', status:'11 min ✓' },
+    { icon:'♟️', name:'Chess puzzle', status:'✓' }
+  ],
+  14: [
+    { icon:'🌙', name:'Sleep 7+ hours', status:'6h 40m ✓' },
+    { icon:'🗣️', name:'Spanish lesson', status:'goal met ✓' },
+    { icon:'🧘', name:'Meditate', status:'not done' },
+    { icon:'♟️', name:'Chess puzzle', status:'✓' }
+  ],
+  15: [
+    { icon:'🌙', name:'Sleep 7+ hours', status:'7h 30m ✓' },
+    { icon:'🗣️', name:'Spanish lesson', status:'goal met ✓' },
+    { icon:'🧘', name:'Meditate', status:'14 min ✓' },
+    { icon:'♟️', name:'Chess puzzle', status:'not done' }
+  ],
+  16: [
+    { icon:'🌙', name:'Sleep 7+ hours', status:'7h 40m ✓' },
+    { icon:'🗣️', name:'Spanish lesson', status:'goal met ✓' },
+    { icon:'🧘', name:'Meditate', status:'not yet' },
+    { icon:'♟️', name:'Chess puzzle', status:'not yet' }
+  ]
+};
+
+function selectWeekDay(day, el){
+  document.querySelectorAll('.day-dot').forEach(d => d.classList.remove('week-selected'));
+  if(el){ el.classList.add('week-selected'); }
+
+  const panel = document.getElementById('homeDayDetail');
+  const monthLabel = 'July ' + day;
+
+  if(day > 16){
+    panel.innerHTML = `<div style="font-weight:800; font-size:14.5px; margin-bottom:4px; color:var(--ink);">${monthLabel}</div>
+      <p style="font-size:13px; color:var(--ink-soft); margin:0;">This day hasn't happened yet.</p>`;
+    return;
+  }
+
+  const rows = homeDayData[day] || [];
+  const rowsHTML = rows.map(r => `
+    <div class="day-detail-row">
+      <span style="color:var(--ink);">${r.icon} ${r.name}</span>
+      <span class="day-detail-goal">${r.status}</span>
+    </div>`).join('');
+
+  panel.innerHTML = `<div style="font-weight:800; font-size:14.5px; margin-bottom:6px; color:var(--ink);">${monthLabel}${day === 16 ? ' · Today' : ''}</div>${rowsHTML}`;
 }
 
 // ---------------- CALENDAR ----------------
@@ -737,10 +1283,10 @@ function selectDay(d, el){
   if(d === 16){
     detail.innerHTML = `
       <div class="section-head" style="margin-top:6px;"><h2>July ${d}</h2></div>
-      <div class="day-detail-row"><span>🌙 Sleep 7+ hours</span><span class="day-detail-goal">7h 40m ✓</span></div>
-      <div class="day-detail-row"><span>🗣️ Spanish lesson</span><span class="day-detail-goal">goal met ✓</span></div>
-      <div class="day-detail-row"><span>🧘 Meditate</span><span class="day-detail-goal">not yet</span></div>
-      <div class="day-detail-row"><span>♟️ Chess puzzle</span><span class="day-detail-goal">not yet</span></div>`;
+      <div class="day-detail-row"><span style="color:var(--ink);">🌙 Sleep 7+ hours</span><span class="day-detail-goal">7h 40m ✓</span></div>
+      <div class="day-detail-row"><span style="color:var(--ink);">🗣️ Spanish lesson</span><span class="day-detail-goal">goal met ✓</span></div>
+      <div class="day-detail-row"><span style="color:var(--ink);">🧘 Meditate</span><span class="day-detail-goal">not yet</span></div>
+      <div class="day-detail-row"><span style="color:var(--ink);">♟️ Chess puzzle</span><span class="day-detail-goal">not yet</span></div>`;
   } else {
     detail.innerHTML = `<div class="section-head" style="margin-top:6px;"><h2>July ${d}</h2></div>
       <p style="color:var(--ink-soft); font-size:13.5px;">3 of 4 habits completed.</p>`;
@@ -752,7 +1298,9 @@ function buildHeatmap(){
   let html = '';
   for(let i=0;i<70;i++){
     const r = Math.random();
-    const color = r > 0.8 ? '#067A55' : r > 0.55 ? '#0E9F6E' : r > 0.3 ? '#B7E9D6' : '#EEEEF0';
+    const color = isDarkMode
+      ? (r > 0.8 ? '#0E9F6E' : r > 0.55 ? '#067A55' : r > 0.3 ? '#1E4A3B' : '#2E2F35')
+      : (r > 0.8 ? '#067A55' : r > 0.55 ? '#0E9F6E' : r > 0.3 ? '#B7E9D6' : '#EEEEF0');
     html += `<div class="heat-cell" style="background:${color};"></div>`;
   }
   hm.innerHTML = html;
@@ -762,24 +1310,162 @@ function sendPromptMsg(){
   if(window.sendPrompt){ sendPrompt("Let's design the Create Habit screen next."); }
 }
 
+// ---------------- FAB SPEED-DIAL ----------------
+let fabOpen = false;
+function toggleFabMenu(){
+  fabOpen = !fabOpen;
+  document.getElementById('fabWrap').classList.toggle('open', fabOpen);
+  document.getElementById('fabIcon').classList.toggle('rotated', fabOpen);
+}
+function closeFabMenu(){
+  fabOpen = false;
+  document.getElementById('fabWrap').classList.remove('open');
+  document.getElementById('fabIcon').classList.remove('rotated');
+}
+
+function addHabitCardToList(name, icon){
+  const list = document.getElementById('screen-habits');
+  const card = document.createElement('div');
+  card.className = 'habit-card';
+  card.innerHTML = `<div class="habit-card-top">
+      <div class="ring" style="--pct:0%; background:var(--neutral-chip);"><div class="ring-inner">${icon}</div></div>
+      <div class="habit-info">
+        <div class="habit-name">${name}</div>
+        <div class="habit-sub"><span class="tier-badge tier-self">Self‑report</span> · 🔥 0</div>
+      </div>
+    </div>`;
+  list.insertBefore(card, document.getElementById('fabWrap'));
+}
+
+function openQuickAdd(){
+  closeFabMenu();
+  document.getElementById('quickAddInput').value = '';
+  document.getElementById('quickAddSheet').classList.add('open');
+  document.getElementById('sheetBackdrop').classList.add('open');
+}
+function closeQuickAdd(){
+  document.getElementById('quickAddSheet').classList.remove('open');
+  document.getElementById('sheetBackdrop').classList.remove('open');
+}
+function submitQuickAdd(){
+  const val = document.getElementById('quickAddInput').value.trim();
+  if(val.length === 0) return;
+  addHabitCardToList(val, '✨');
+  closeQuickAdd();
+  switchTab('habits');
+}
+
+function openCreateHabitForm(){
+  closeFabMenu();
+  document.getElementById('createHabitOverlay').classList.add('open');
+  document.getElementById('sheetBackdrop').classList.add('open');
+}
+function closeCreateHabitForm(){
+  document.getElementById('createHabitOverlay').classList.remove('open');
+  document.getElementById('sheetBackdrop').classList.remove('open');
+}
+function submitCreateHabit(){
+  const name = document.getElementById('newHabitName').value.trim() || 'New Habit';
+  const icon = document.getElementById('newHabitIcon').value.trim() || '⭐';
+  addHabitCardToList(name, icon);
+  closeCreateHabitForm();
+  switchTab('habits');
+}
+
+// ---------------- SETTINGS: DARK MODE + ACCENT COLOR ----------------
+const ACCENTS = {
+  emerald: { base:'#0E9F6E', deep:'#067A55', tintLight:'#E3F6EE', tintDark:'rgba(14,159,110,0.18)' },
+  indigo:  { base:'#5B5FE9', deep:'#3E42C4', tintLight:'#E7E7FB', tintDark:'rgba(91,95,233,0.18)' },
+  sky:     { base:'#38BDF8', deep:'#0EA5E9', tintLight:'#E0F6FF', tintDark:'rgba(56,189,248,0.18)' },
+  orange:  { base:'#FB923C', deep:'#E2670E', tintLight:'#FFEEDD', tintDark:'rgba(251,146,60,0.18)' },
+  purple:  { base:'#A78BFA', deep:'#8257E5', tintLight:'#F0EBFE', tintDark:'rgba(167,139,250,0.18)' }
+};
+let currentAccent = 'emerald';
+let isDarkMode = false;
+
+function openSettings(){
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+function closeSettings(){
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
+
+function toggleDarkMode(){
+  isDarkMode = !isDarkMode;
+  const device = document.querySelector('.device');
+  device.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  document.getElementById('darkModeToggle').classList.toggle('on', isDarkMode);
+  applyAccentTint(); // re-apply tint variant appropriate to the new theme
+  buildHeatmap(); // regenerate heatmap cells with the theme-appropriate palette
+}
+
+function setAccentColor(name){
+  currentAccent = name;
+  const device = document.querySelector('.device');
+  const a = ACCENTS[name];
+  device.style.setProperty('--emerald', a.base);
+  device.style.setProperty('--emerald-deep', a.deep);
+  applyAccentTint();
+  document.querySelectorAll('.accent-opt').forEach(opt => {
+    const selected = opt.dataset.accent === name;
+    opt.classList.toggle('selected', selected);
+    opt.textContent = selected ? '✓' : '';
+  });
+}
+
+function applyAccentTint(){
+  const device = document.querySelector('.device');
+  const a = ACCENTS[currentAccent];
+  device.style.setProperty('--emerald-tint', isDarkMode ? a.tintDark : a.tintLight);
+}
+
 buildCalendar();
 buildHeatmap();
+selectWeekDay(16, document.querySelector('.day-dot.today'));
 
 // ---------------- DELEGATED CLICK HANDLING ----------------
 document.addEventListener('click', function(e){
+  if(e.target.id === 'sheetBackdrop'){
+    closeQuickAdd();
+    closeCreateHabitForm();
+    return;
+  }
+  const colorOpt = e.target.closest('.color-opt');
+  if(colorOpt){
+    colorOpt.parentElement.querySelectorAll('.color-opt').forEach(c => c.classList.remove('selected'));
+    colorOpt.classList.add('selected');
+    return;
+  }
   const el = e.target.closest('[data-action]');
-  if(!el) return;
+  if(!el){
+    // click outside the FAB speed-dial closes it
+    if(fabOpen && !e.target.closest('#fabWrap')){ closeFabMenu(); }
+    return;
+  }
   const action = el.dataset.action;
   if(action === 'switch-tab'){ switchTab(el.dataset.tab); }
   else if(action === 'open-habit'){ openHabit(el.dataset.habit); }
   else if(action === 'close-habit'){ closeHabit(); }
-  else if(action === 'close-session'){ closeSession(false); }
+  else if(action === 'minimize-session'){ minimizeSession(); }
+  else if(action === 'resume-session'){ resumeSession(); }
+  else if(action === 'cancel-session'){ cancelSession(); }
   else if(action === 'toggle-pause'){ togglePause(); }
   else if(action === 'mark-complete'){ markComplete(); }
   else if(action === 'quick-complete'){ quickComplete(); }
-  else if(action === 'fab'){ sendPromptMsg(); }
   else if(action === 'select-day'){ selectDay(parseInt(el.dataset.day, 10), el); }
+  else if(action === 'select-week-day'){ selectWeekDay(parseInt(el.dataset.day, 10), el); }
   else if(action === 'start-session'){ startSession(el.dataset.mode, parseInt(el.dataset.goal, 10), el.dataset.tool); }
+  else if(action === 'fab-toggle'){ toggleFabMenu(); }
+  else if(action === 'fab-quick-add'){ openQuickAdd(); }
+  else if(action === 'fab-create-habit'){ openCreateHabitForm(); }
+  else if(action === 'close-quick-add'){ closeQuickAdd(); }
+  else if(action === 'submit-quick-add'){ submitQuickAdd(); }
+  else if(action === 'close-create-habit'){ closeCreateHabitForm(); }
+  else if(action === 'submit-create-habit'){ submitCreateHabit(); }
+  else if(action === 'open-settings'){ openSettings(); }
+  else if(action === 'close-settings'){ closeSettings(); }
+  else if(action === 'toggle-dark-mode'){ toggleDarkMode(); }
+  else if(action === 'set-accent'){ setAccentColor(el.dataset.accent); }
 });
 </script>
 </body>
