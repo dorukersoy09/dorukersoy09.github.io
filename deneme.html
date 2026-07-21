@@ -113,7 +113,12 @@
     overflow-y:auto;
     padding: 6px 20px 110px 20px;
     scrollbar-width:none;
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    opacity:1;
+    transform: translateY(0);
   }
+  .screen.tab-fade-out{ opacity:0; transform: translateY(6px); }
+  .screen.tab-fade-in{ opacity:0; transform: translateY(6px); }
   .screen::-webkit-scrollbar{ display:none; }
 
   .tabbar{
@@ -503,6 +508,15 @@
     pointer-events:none;
   }
 
+  .origin-spark{
+    position:absolute; width:22px; height:22px; border-radius:50%;
+    transform: translate(-50%,-50%) scale(1);
+    background: radial-gradient(circle, #FFF3D6 0%, #FFB25E 55%, rgba(255,120,30,0) 80%);
+    filter: drop-shadow(0 0 10px rgba(255,150,60,0.85));
+    will-change: transform, opacity;
+    pointer-events:none;
+  }
+
   .streak-hero.celebrating{ animation: hero-glow-soft 0.7s ease-out; }
   @keyframes hero-glow-soft{
     0%{   box-shadow: 0 14px 34px rgba(6,122,85,0.35); }
@@ -887,11 +901,33 @@
 
 <script>
 // ---------------- TAB NAVIGATION ----------------
+let currentTab = 'home';
 function switchTab(name){
+  currentTab = name;
   document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
   document.getElementById('screen-'+name).style.display = 'block';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelector('.tab[data-tab="'+name+'"]').classList.add('active');
+}
+
+// Smooth, non-instant tab change used specifically when the celebration flow needs
+// to bring the user to Home — a soft fade rather than the instant swap manual tab taps use.
+function switchTabAnimated(targetTab, onDone){
+  if(currentTab === targetTab){ onDone(); return; }
+  const fromEl = document.getElementById('screen-' + currentTab);
+  fromEl.classList.add('tab-fade-out');
+  setTimeout(() => {
+    switchTab(targetTab);
+    fromEl.classList.remove('tab-fade-out');
+    const toEl = document.getElementById('screen-' + targetTab);
+    toEl.classList.add('tab-fade-in');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        toEl.classList.remove('tab-fade-in');
+        setTimeout(onDone, 300);
+      });
+    });
+  }, 220);
 }
 
 // ---------------- HABIT DATA ----------------
@@ -1125,45 +1161,142 @@ function checkAllHabitsComplete(){
   }
 }
 
+let lastCompletionOrigin = null;
+
+// Captures exactly where the user tapped (device-relative coordinates), so the
+// celebration can visibly originate from that point rather than a fixed spot.
+function captureCompletionOrigin(e){
+  const deviceRect = document.querySelector('.device').getBoundingClientRect();
+  lastCompletionOrigin = {
+    x: e.clientX - deviceRect.left,
+    y: e.clientY - deviceRect.top
+  };
+}
+
 function celebrateStreak(){
-  // Duolingo-style celebrations always happen on the streak screen — mirror that
-  // so the flame is guaranteed to be on screen no matter where the user currently is.
-  switchTab('home');
+  const origin = lastCompletionOrigin || { x: 195, y: 700 }; // sane fallback if no click coords were captured
+  spawnOriginSpark(origin.x, origin.y);
 
-  // Wait a frame for the tab switch to paint before measuring the flame's real position.
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    const device = document.querySelector('.device');
-    const flame = document.getElementById('flameIcon');
-    const deviceRect = device.getBoundingClientRect();
-    const flameRect = flame.getBoundingClientRect();
-    const cx = flameRect.left + flameRect.width / 2 - deviceRect.left;
-    const cy = flameRect.top + flameRect.height / 2 - deviceRect.top;
+  if(currentTab === 'home'){
+    proceedToStreakOnHome(origin);
+  } else {
+    // Completed from another page — smoothly navigate to Home first. The spark stays
+    // visible the entire time since it lives in the always-on-top celebration layer,
+    // not inside any single page, so nothing looks like it "restarts."
+    switchTabAnimated('home', () => proceedToStreakOnHome(origin));
+  }
+}
 
-    // Glow pulse, centered exactly on the real flame.
-    const glow = document.getElementById('flameGlow');
-    glow.style.left = cx + 'px';
-    glow.style.top = cy + 'px';
-    glow.classList.remove('pulse');
-    void glow.offsetWidth; // force reflow so the animation can replay
-    glow.classList.add('pulse');
-
-    // The flame itself does a lively spring bounce.
-    flame.classList.remove('flame-pop');
-    void flame.offsetWidth;
-    flame.classList.add('flame-pop');
-
-    // A soft, brief warm glow on the whole card — subtle, not distracting.
+// Once Home is showing, figure out whether the streak counter is already visible.
+// If not, smoothly scroll to it — never an instant jump — then celebrate.
+function proceedToStreakOnHome(origin){
+  requestAnimationFrame(() => {
+    const homeScreen = document.getElementById('screen-home');
     const hero = document.getElementById('streakHero');
-    hero.classList.remove('celebrating');
-    void hero.offsetWidth;
-    hero.classList.add('celebrating');
+    const heroRect = hero.getBoundingClientRect();
+    const containerRect = homeScreen.getBoundingClientRect();
+    const fullyVisible = heroRect.top >= containerRect.top && heroRect.bottom <= containerRect.bottom;
 
-    // Embers burst outward right at the peak of the bounce.
-    spawnEmberParticles(cx, cy);
+    if(fullyVisible){
+      finishCelebrationAtFlame(origin);
+    } else {
+      const delta = heroRect.top - containerRect.top;
+      const targetScrollTop = Math.max(0, homeScreen.scrollTop + delta - 16);
+      smoothScrollTo(homeScreen, targetScrollTop, 600, () => finishCelebrationAtFlame(origin));
+    }
+  });
+}
 
-    // Number ticks up in sync with the bounce's peak, not at the very start.
-    setTimeout(bumpStreakNumber, 160);
-  }));
+// Custom eased scroll (not native smooth-scroll) so we know exactly when it finishes
+// and can chain the celebration immediately after, with no guessing or abrupt jumps.
+function smoothScrollTo(container, targetTop, duration, onComplete){
+  const startTop = container.scrollTop;
+  const distance = targetTop - startTop;
+  if(Math.abs(distance) < 2){ onComplete(); return; }
+  const startTime = performance.now();
+  function step(now){
+    const elapsed = now - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic — decelerates into place, never snaps
+    container.scrollTop = startTop + distance * eased;
+    if(t < 1){
+      requestAnimationFrame(step);
+    } else {
+      onComplete();
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function spawnOriginSpark(x, y){
+  const old = document.getElementById('originSpark');
+  if(old) old.remove();
+  const spark = document.createElement('div');
+  spark.className = 'origin-spark';
+  spark.id = 'originSpark';
+  spark.style.left = x + 'px';
+  spark.style.top = y + 'px';
+  document.getElementById('celebrationLayer').appendChild(spark);
+}
+
+// Travels the origin spark from the tap point to the flame's real, current position,
+// then merges it into the flame-pop/glow/embers — one continuous motion, not two steps.
+function finishCelebrationAtFlame(origin){
+  const device = document.querySelector('.device');
+  const flame = document.getElementById('flameIcon');
+  const deviceRect = device.getBoundingClientRect();
+  const flameRect = flame.getBoundingClientRect();
+  const toX = flameRect.left + flameRect.width / 2 - deviceRect.left;
+  const toY = flameRect.top + flameRect.height / 2 - deviceRect.top;
+
+  const spark = document.getElementById('originSpark');
+  if(!spark){ runFlameCelebration(toX, toY); return; }
+
+  const dx = toX - origin.x;
+  const dy = toY - origin.y;
+  const anim = spark.animate([
+    { transform: 'translate(-50%,-50%) translate(0,0) scale(1)', opacity: 1 },
+    { transform: `translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(0.55)`, opacity: 0.9 }
+  ], { duration: 380, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'forwards' });
+
+  let landed = false;
+  const land = () => {
+    if(landed) return;
+    landed = true;
+    if(spark.isConnected) spark.remove();
+    runFlameCelebration(toX, toY);
+  };
+  anim.onfinish = land;
+  setTimeout(land, 550); // safety net in case onfinish doesn't fire in some environment
+}
+
+function runFlameCelebration(cx, cy){
+  const flame = document.getElementById('flameIcon');
+
+  // Glow pulse, centered exactly on the real flame.
+  const glow = document.getElementById('flameGlow');
+  glow.style.left = cx + 'px';
+  glow.style.top = cy + 'px';
+  glow.classList.remove('pulse');
+  void glow.offsetWidth; // force reflow so the animation can replay
+  glow.classList.add('pulse');
+
+  // The flame itself does a lively spring bounce.
+  flame.classList.remove('flame-pop');
+  void flame.offsetWidth;
+  flame.classList.add('flame-pop');
+
+  // A soft, brief warm glow on the whole card — subtle, not distracting.
+  const hero = document.getElementById('streakHero');
+  hero.classList.remove('celebrating');
+  void hero.offsetWidth;
+  hero.classList.add('celebrating');
+
+  // Embers burst outward right at the peak of the bounce.
+  spawnEmberParticles(cx, cy);
+
+  // Number ticks up in sync with the bounce's peak, not at the very start.
+  setTimeout(bumpStreakNumber, 160);
 }
 
 function spawnEmberParticles(cx, cy){
@@ -1450,8 +1583,8 @@ document.addEventListener('click', function(e){
   else if(action === 'resume-session'){ resumeSession(); }
   else if(action === 'cancel-session'){ cancelSession(); }
   else if(action === 'toggle-pause'){ togglePause(); }
-  else if(action === 'mark-complete'){ markComplete(); }
-  else if(action === 'quick-complete'){ quickComplete(); }
+  else if(action === 'mark-complete'){ captureCompletionOrigin(e); markComplete(); }
+  else if(action === 'quick-complete'){ captureCompletionOrigin(e); quickComplete(); }
   else if(action === 'select-day'){ selectDay(parseInt(el.dataset.day, 10), el); }
   else if(action === 'select-week-day'){ selectWeekDay(parseInt(el.dataset.day, 10), el); }
   else if(action === 'start-session'){ startSession(el.dataset.mode, parseInt(el.dataset.goal, 10), el.dataset.tool); }
